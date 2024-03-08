@@ -29,6 +29,8 @@
         linkToUse: "home",
         nameToUse: "Homepage",
         codeToUse: "Home",
+        useController: true,
+        useAPI: true,
         inNav: false    //Keep this value false as the navbar branding links back to home already.
     );
     
@@ -42,6 +44,18 @@
     
     
     
+    $this->registerPage(
+        linkToUse: "manager",
+        nameToUse: "Route Manager",
+        codeToUse: "Manager",
+        useModel: true,
+        useController: true,
+        useAPI: true,
+        inNav: true,
+        loginRequired: true, 
+        accessRoles: ["Manager", "Super Admin"]
+    );
+
     
     
     //ADMINISTRATON PAGE

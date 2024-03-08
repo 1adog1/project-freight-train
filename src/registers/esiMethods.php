@@ -31,5 +31,11 @@
         method: "universe_names",
         requiredArguments: ["ids"]
     );
+    
+    $this->register(
+        endpoint: "/route/{origin}/{destination}/",
+        method: "route",
+        requiredArguments: ["origin", "destination"]
+    );
 
 ?>

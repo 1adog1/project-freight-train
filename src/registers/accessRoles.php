@@ -20,9 +20,7 @@
     
     */
 
-    $this->registerRole("Member");
-    $this->registerRole("Role 1");
-    $this->registerRole("Role 2");
-    $this->registerRole("Admin");
+    $this->registerRole("Manager");
+    $this->registerRole("Hauler");
 
 ?>

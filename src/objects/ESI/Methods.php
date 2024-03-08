@@ -21,7 +21,7 @@
 
             $categories = implode(",", $arguments["categories"]);
             $search = urlencode($arguments["search"]);
-            $language = (isset($arguments["language"]) ? ("&language=" . $arguments["language"]) : "");;
+            $language = (isset($arguments["language"]) ? ("&language=" . $arguments["language"]) : "");
             $strict = (isset($arguments["strict"]) ? ("&strict=" . $arguments["strict"]) : "");
 
             $url = $this->esiURL . "latest/characters/" . $arguments["character_id"] . "/search/?datasource=tranquility&categories=" . $categories . "&search=" . $search . $language . $strict;
@@ -43,6 +43,19 @@
                 method: "POST",
                 payload: $arguments["ids"],
                 cacheTime: 3600,
+                retries: (isset($arguments["retries"]) ? $arguments["retries"] : 0)
+            );
+
+        }
+
+        protected function route(array $arguments) {
+
+            $flag = $arguments["flag"] ?? "shortest";
+            $avoid = (isset($arguments["avoid"]) ? ("&avoid=" . implode(",", $arguments["avoid"])) : "");
+
+            return $this->makeRequest(
+                endpoint: "/route/{origin}/{destination}/",
+                url: ($this->esiURL . "latest/route/" . $arguments["origin"] . "/" . $arguments["destination"] . "/?datasource=tranquility&flag=" . $flag . $avoid),
                 retries: (isset($arguments["retries"]) ? $arguments["retries"] : 0)
             );
 

@@ -9,7 +9,8 @@
         <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-
+        <script src="/resources/js/jquery-ui/jquery-ui.js"></script>
+        <link href="/resources/js/jquery-ui/jquery-ui.css" rel="stylesheet">
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
         
@@ -35,6 +36,13 @@
         .login-button {
             height: 32px;
         }
+
+        .ui-autocomplete {
+            max-height: 256px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background-color: var(--bs-light);
+        }
         
         <?php
         
@@ -47,7 +55,11 @@
         
         <div class="container-fluid">
         
-            <a class="navbar-brand mb-1" href="/">App Name</a>
+            <?php
+            
+                $this->renderBadge(); 
+                
+            ?>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContents" aria-controls="navbarContents" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

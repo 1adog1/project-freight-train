@@ -4,9 +4,11 @@
 
     class SiteCore {
         
+        private $serviceName;
         private $navArray;
         private $pageLink;
         private $pageCode;
+        private $csrfToken;
         private $loginStatus;
         private $characterStats;
         private $hasModel;
@@ -22,6 +24,7 @@
             private $dependencies
         ) {
             
+            $this->serviceName = $this->dependencies->get("Service Name");
             $this->navArray = $this->dependencies->get("Nav Links");
             $this->pageLink = $this->dependencies->get("Page Link");
             $this->pageCode = $this->dependencies->get("Page Code");
@@ -171,6 +174,16 @@
             
         }
         
+        public function renderBadge() {
+            
+            ?>
+                    
+            <a class="navbar-brand mb-1" href="/"><?php echo htmlspecialchars($this->serviceName); ?></a>
+            
+            <?php
+
+        }
+
         public function renderNav() {
             
             foreach ($this->navArray as $eachLink) {
