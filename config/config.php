@@ -65,7 +65,7 @@
 
         //SITE CONFIGURATION
         $configVariables["Service Name"] = $ENVS["ENV_FREIGHT_WEBSITE_SERVICE_NAME"];
-        $configVariables["Auth Cookie Name"] = $ENVS["ENV_FREIGHT_WEBSITE_AUTH_COOKIE"] ?? "IntelAuthID";
+        $configVariables["Auth Cookie Name"] = $ENVS["ENV_FREIGHT_WEBSITE_AUTH_COOKIE"] ?? "FreightTrainAuthID";
         $configVariables["Session Time"] = (int)($ENVS["ENV_FREIGHT_WEBSITE_SESSION_TIME"] ?? 43200);
         $configVariables["Auth Cache Time"] = (int)($ENVS["ENV_FREIGHT_WEBSITE_AUTH_CACHE_TIME"] ?? 600);
         $configVariables["Store Visitor IPs"] = boolval(($ENVS["ENV_FREIGHT_WEBSITE_STORE_IPS"] ?? 0));

@@ -47,7 +47,7 @@ DatabaseName =
 ServiceName = 
 ;When Using Environment Variables: ENV_FREIGHT_WEBSITE_SERVICE_NAME - (REQUIRED)
 AuthCookieName = FreightTrainAuthID
-;When Using Environment Variables: ENV_FREIGHT_WEBSITE_AUTH_COOKIE - (DEFAULT "IntelAuthID")
+;When Using Environment Variables: ENV_FREIGHT_WEBSITE_AUTH_COOKIE - (DEFAULT "FreightTrainAuthID")
 SessionTime = 43200
 ;When Using Environment Variables: ENV_FREIGHT_WEBSITE_SESSION_TIME - (DEFAULT "43200")
 ;Session Time is an integer of seconds after logging in that a character's session will be invalidated.
