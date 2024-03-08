@@ -1,10 +1,6 @@
 # Project Freight Train
 
-Project Overhaul is a new web application framework specifically designed for Eve Online applications. It replaces the *Access Control* framework that was used in my early projects with a much more robust object-oriented design.
-
-This framework features built-in user authentication and access control that can be altered in-app, using either Eve Online Affiliations (Character, Corporation, Alliance) or Brave NeuCore Groups, with these different methods being interchangeable with a simple update of a config value. It also features an easy to use logging interface and a robust, in-app view and filter for log entries.
-
-This framework is currently in Beta. It works, but much of the functionality is not yet documented.
+Project Freight Train is a configurable rate calculator for freight services in Eve Online. It features a suite of configuration options, including standard routes, rush hauling, both broad and specific routing restrictions, custom volume and collateral limitations in a variety of scopes, and different pricing schemes for Jump Drive, Gate, Wormhole, and Pochven based hauling methods. 
 
 **Current Version: Pickup – 0 – 0**
 
