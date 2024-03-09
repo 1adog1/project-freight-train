@@ -79,15 +79,31 @@
                         <?php $this->routeLister(); ?>
 
                     </ul>
+                    <p class="text-danger fst-italic mt-2">Routes may override volume and collateral limits.</p>
                 </div>
                 <div class="col-lg-3">
-                    <h3>General Limits</h3>
+                    <h3>General Volume Limits</h3>
                     <ul class="list-group" style="margin-top: 2rem !important;">
 
-                        <?php $this->limitsTemplate(); ?>
+                        <?php $this->volumeLimitsTemplate(); ?>
 
                     </ul>
-                    <p class="text-danger fst-italic mt-2">* Some limits may be overridden by individual routes.</p>
+                </div>
+                <div class="col-lg-3">
+                    <h3>Special Volume Limits</h3>
+                    <ul class="list-group" style="margin-top: 2rem !important;">
+
+                        <?php $this->specialVolumeLimitsTemplate(); ?>
+
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h3>Collateral Limits</h3>
+                    <ul class="list-group" style="margin-top: 2rem !important;">
+
+                        <?php $this->collateralLimitsTemplate(); ?>
+
+                    </ul>
                 </div>
             </div>
 
@@ -96,42 +112,56 @@
             <?php
         }
 
-        protected function limitsTemplate() {
+        protected function volumeLimitsTemplate() {
         ?>
 
             <li class="list-group-item bg-dark text-light">
-                <b>Max Collateral: </b><?php echo htmlspecialchars(number_format($this->controller->maxCollateral)) . " ISK"; ?> *
-            </li>
-            <li class="list-group-item bg-dark text-light">
-                <b>High Collateral Cutoff: </b><?php echo htmlspecialchars(number_format($this->controller->highCollateralCutoff)) . " ISK"; ?>
-            </li>
-            <li class="list-group-item bg-dark text-light">
-                <b>Max Volume: </b><?php echo htmlspecialchars(number_format($this->controller->maxVolume)) . " m³"; ?> *
+                <b>Max Volume: </b><?php echo htmlspecialchars(number_format($this->controller->maxVolume)) . " m³"; ?>
             </li>
             <li class="list-group-item bg-dark text-light">
                 <b>Blockade Runner Cutoff: </b><?php echo htmlspecialchars(number_format($this->controller->blockadeRunnerCutoff)) . " m³"; ?>
             </li>
-            <?php if ($this->controller->allowHighsecToHighsec): ?>
 
-                <li class="list-group-item bg-dark text-light">
-                    <b>Max Highsec ↔ Highsec Volume: </b><?php echo htmlspecialchars(number_format($this->controller->highsecToHighsecMaxVolume)) . " m³"; ?> *
-                </li>
+        <?php
+        }
 
-            <?php endif; ?>
-            <?php if ($this->controller->allowWormholes): ?>
+        protected function specialVolumeLimitsTemplate() {
+            ?>
+    
+                <?php if ($this->controller->allowHighsecToHighsec): ?>
+    
+                    <li class="list-group-item bg-dark text-light">
+                        <b>Max Highsec ↔ Highsec Volume: </b><?php echo htmlspecialchars(number_format($this->controller->highsecToHighsecMaxVolume)) . " m³"; ?>
+                    </li>
+    
+                <?php endif; ?>
+                <?php if ($this->controller->allowWormholes): ?>
+    
+                    <li class="list-group-item bg-dark text-light">
+                        <b>Max Wormhole Volume: </b><?php echo htmlspecialchars(number_format($this->controller->maxWormholeVolume)) . " m³"; ?>
+                    </li>
+    
+                <?php endif; ?>
+                <?php if ($this->controller->allowPochven): ?>
+    
+                    <li class="list-group-item bg-dark text-light">
+                        <b>Max Pochven Volume: </b><?php echo htmlspecialchars(number_format($this->controller->maxPochvenVolume)) . " m³"; ?>
+                    </li>
+    
+                <?php endif; ?>
+    
+            <?php
+            }
 
-                <li class="list-group-item bg-dark text-light">
-                    <b>Max Wormhole Volume: </b><?php echo htmlspecialchars(number_format($this->controller->maxWormholeVolume)) . " m³"; ?> *
-                </li>
+        protected function collateralLimitsTemplate() {
+        ?>
 
-            <?php endif; ?>
-            <?php if ($this->controller->allowPochven): ?>
-
-                <li class="list-group-item bg-dark text-light">
-                    <b>Max Pochven Volume: </b><?php echo htmlspecialchars(number_format($this->controller->maxPochvenVolume)) . " m³"; ?> *
-                </li>
-
-            <?php endif; ?>
+            <li class="list-group-item bg-dark text-light">
+                <b>Max Collateral: </b><?php echo htmlspecialchars(number_format($this->controller->maxCollateral)) . " ISK"; ?>
+            </li>
+            <li class="list-group-item bg-dark text-light">
+                <b>High Collateral Cutoff: </b><?php echo htmlspecialchars(number_format($this->controller->highCollateralCutoff)) . " ISK"; ?>
+            </li>
 
         <?php
         }

@@ -12,7 +12,7 @@
             <hr class="text-light">
 
             <div class="row text-light">
-                <div class="col-xl-7">
+                <div class="col-xl-8">
 
                     <div class="row">
                         <div class="col-md-4">
@@ -46,7 +46,7 @@
                     </table>
 
                 </div>
-                <div class="col-xl-3">
+                <div class="col-xl-4">
 
                     <h3 class="mt-3">Range Tiers</h3>
 
@@ -63,32 +63,38 @@
                         <button type="submit" name="Action" value="Add_Tier" class="btn btn-primary">+</button>
                     </form>
 
-                </div>
-                <div class="col-xl-2">
+                    <div class="row text-light">
+                        <div class="col-xl-6">
 
-                    <h3 class="mt-3">Prohibited Regions</h3>
+                            <h3 class="mt-3">Prohibited Regions</h3>
 
-                    <ul class="list-group" style="margin-top: 2rem !important;">
+                            <ul class="list-group" style="margin-top: 2rem !important;">
 
-                        <?php $this->regionRestrictionLister(); ?>
+                                <?php $this->regionRestrictionLister(); ?>
 
-                    </ul>
-                    <form method="post" action="/manager/" class="input-group mt-3 mb-3">
-                        <input type="text" name="new_region_restriction" id="new_region_restriction" class="form-control" placeholder="Region Name">
-                        <button type="submit" name="Action" value="Add_Restricted_Region" class="btn btn-primary">+</button>
-                    </form>
+                            </ul>
+                            <form method="post" action="/manager/" class="input-group mt-3 mb-3">
+                                <input type="text" name="new_region_restriction" id="new_region_restriction" class="form-control" placeholder="Region Name">
+                                <button type="submit" name="Action" value="Add_Restricted_Region" class="btn btn-primary">+</button>
+                            </form>
 
-                    <h3 style="margin-top: 3rem !important;">Prohibited Systems</h3>
+                        </div>
+                        <div class="col-xl-6">
 
-                    <ul class="list-group" style="margin-top: 2rem !important;">
+                            <h3 class="mt-3">Prohibited Systems</h3>
 
-                        <?php $this->systemRestrictionLister(); ?>
+                            <ul class="list-group" style="margin-top: 2rem !important;">
 
-                    </ul>
-                    <form method="post" action="/manager/" class="input-group mt-3 mb-3">
-                        <input type="text" name="new_system_restriction" id="new_system_restriction" class="form-control" placeholder="System Name">
-                        <button type="submit" name="Action" value="Add_Restricted_System" class="btn btn-primary">+</button>
-                    </form>
+                                <?php $this->systemRestrictionLister(); ?>
+
+                            </ul>
+                            <form method="post" action="/manager/" class="input-group mt-3 mb-3">
+                                <input type="text" name="new_system_restriction" id="new_system_restriction" class="form-control" placeholder="System Name">
+                                <button type="submit" name="Action" value="Add_Restricted_System" class="btn btn-primary">+</button>
+                            </form>
+
+                        </div>
+                    </div>
 
                 </div>
             </div>
