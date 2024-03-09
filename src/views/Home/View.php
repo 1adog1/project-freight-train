@@ -88,6 +88,8 @@
                         <b class="text-muted">Destination — </b> <?php echo htmlspecialchars($this->controller->destinationString); ?><br>
                         <b class="text-muted">Collateral — </b> <?php echo htmlspecialchars($this->controller->collateralString); ?><br>
                         <b class="text-muted">Reward — </b> <?php echo htmlspecialchars($this->controller->priceString); ?><br>
+                        <b class="text-muted">Expiration — </b> <?php echo htmlspecialchars($this->controller->expirationString); ?><br>
+                        <b class="text-muted">Time to Complete — </b> <?php echo htmlspecialchars($this->controller->timeToCompleteString); ?><br>
                     </p>
 
                     <hr class="text-light mt-3">
@@ -98,10 +100,10 @@
                             <b class="text-muted">Price Model — </b> <?php echo htmlspecialchars($this->controller->priceModel); ?><br>
                             <b class="text-muted">Unit Price — </b> <?php echo htmlspecialchars($this->controller->unitPriceString); ?><br>
                             <b class="text-muted">Collateral Premium — </b> <?php echo htmlspecialchars($this->controller->collateralPremiumString); ?><br>
-                            <b class="text-muted">Multipliers:</b>
+                            <b class="text-muted">Penalties:</b>
                             <div class="ms-4">
                                 <?php 
-                                    foreach ($this->controller->multipliers as $eachType => $eachValue) {
+                                    foreach ($this->controller->penalties as $eachType => $eachValue) {
                                         ?>
                                         <?php echo htmlspecialchars($eachType); ?>: <?php echo htmlspecialchars($eachValue); ?><br>
                                         <?php

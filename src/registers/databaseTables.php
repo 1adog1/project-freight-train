@@ -54,6 +54,10 @@
         ["Name" => "allowwormholes", "Type" => "TINYINT"], 
         ["Name" => "allowpochven", "Type" => "TINYINT"], 
         ["Name" => "allowrush", "Type" => "TINYINT"], 
+        ["Name" => "contractexpiration", "Type" => "TINYINT"], 
+        ["Name" => "contracttimetocomplete", "Type" => "TINYINT"], 
+        ["Name" => "rushcontractexpiration", "Type" => "TINYINT"], 
+        ["Name" => "rushcontracttimetocomplete", "Type" => "TINYINT"], 
         ["Name" => "rushmultiplier", "Type" => "NUMERIC(8,4)"], 
         ["Name" => "nonstandardmultiplier", "Type" => "NUMERIC(8,4)"], 
         ["Name" => "maxvolume", "Type" => "BIGINT"], 
@@ -66,7 +70,10 @@
         ["Name" => "wormholeprice", "Type" => "BIGINT"], 
         ["Name" => "maxpochvenvolume", "Type" => "BIGINT"], 
         ["Name" => "pochvenprice", "Type" => "BIGINT"], 
-        ["Name" => "collateralpremium", "Type" => "NUMERIC(8,4)"]
+        ["Name" => "collateralpremium", "Type" => "NUMERIC(8,4)"],
+        ["Name" => "highcollateralcutoff", "Type" => "BIGINT"], 
+        ["Name" => "highcollateralpenalty", "Type" => "BIGINT"], 
+        ["Name" => "highcollateralblockaderunnerpenalty", "Type" => "BIGINT"]
     );
 
     $siteDatabase->register(
@@ -84,8 +91,9 @@
         ["Name" => "collateralpremiumoverride", "Type" => "NUMERIC(8,4)", "Special" => "DEFAULT NULL"],
         ["Name" => "maxvolumeoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "maxcollateraloverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
-        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT PK_ROUTES PRIMARY KEY (start, end)"],
-        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT CHK_Fixed_Price CHECK (pricemodel != 'Fixed' OR basepriceoverride IS NOT NULL)"]
+        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT PK_ROUTES_MUST_BE_UNIQUE PRIMARY KEY (start, end)"],
+        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT CHK_FIXED_NEEDS_PRICE CHECK (pricemodel != 'Fixed' OR basepriceoverride IS NOT NULL)"],
+        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT CHK_NO_STANDARD_PRICE_OVERRIDE CHECK (pricemodel != 'Standard' OR basepriceoverride IS NULL)"]
     );
 
     $siteDatabase->register(

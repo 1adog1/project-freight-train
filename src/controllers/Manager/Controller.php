@@ -9,12 +9,6 @@
 
         //General Settings
         public $contractCorporation;
-        public $maxVolume;
-        public $maxCollateral;
-        public $blockadeRunnerCutoff;
-        public $maxThresholdPrice;
-        public $gatePrice;
-
         //Restrictions
         public $onlyApprovedRoutes;
         public $allowHighsecToHighsec;
@@ -23,16 +17,32 @@
         public $allowWormholes;
         public $allowPochven;
         public $allowRush;
+        //Timing Controls
+        public $contractExpiration;
+        public $contractTimeToComplete;
+        public $rushContractExpiration;
+        public $rushContractTimeToComplete;
+        //Pricing Controls
+        public $maxThresholdPrice;
+        public $gatePrice;
+        public $wormholePrice;
+        public $pochvenPrice;
         //Volume Controls
+        public $maxVolume;
+        public $blockadeRunnerCutoff;
         public $highsecToHighsecMaxVolume;
         public $maxWormholeVolume;
         public $maxPochvenVolume;
-        //Pricing
+        //Collateral Controls
+        public $maxCollateral;
+        public $collateralPremium;
+        //Collateral Penalty Controls
+        public $highCollateralCutoff;
+        public $highCollateralPenalty;
+        public $highCollateralBlockadeRunnerPenalty;
+        //Multiplier Controls
         public $rushMultiplier;
         public $nonstandardMultiplier;
-        public $wormholePrice;
-        public $pochvenPrice;
-        public $collateralPremium;
 
         public $quoteRequested = false;
         public $volume;
@@ -232,6 +242,10 @@
                         allowwormholes, 
                         allowpochven, 
                         allowrush, 
+                        contractexpiration,
+                        contracttimetocomplete,
+                        rushcontractexpiration,
+                        rushcontracttimetocomplete,
                         rushmultiplier, 
                         nonstandardmultiplier, 
                         maxvolume, 
@@ -244,7 +258,10 @@
                         wormholeprice, 
                         maxpochvenvolume, 
                         pochvenprice, 
-                        collateralpremium
+                        collateralpremium,
+                        highcollateralcutoff,
+                        highcollateralpenalty,
+                        highcollateralblockaderunnerpenalty
                     ) VALUES (
                         :contractcorporation, 
                         :onlyapprovedroutes, 
@@ -254,6 +271,10 @@
                         :allowwormholes, 
                         :allowpochven, 
                         :allowrush, 
+                        :contractexpiration,
+                        :contracttimetocomplete,
+                        :rushcontractexpiration,
+                        :rushcontracttimetocomplete,
                         :rushmultiplier, 
                         :nonstandardmultiplier, 
                         :maxvolume, 
@@ -266,7 +287,10 @@
                         :wormholeprice, 
                         :maxpochvenvolume, 
                         :pochvenprice, 
-                        :collateralpremium
+                        :collateralpremium,
+                        :highcollateralcutoff,
+                        :highcollateralpenalty,
+                        :highcollateralblockaderunnerpenalty
                     )"
                 );
                 $optionUpdate->bindParam(":contractcorporation", $_POST["contractCorporation"]);
@@ -277,6 +301,10 @@
                 $optionUpdate->bindValue(":allowwormholes", (int)isset($_POST["allowWormholes"]), \PDO::PARAM_INT);
                 $optionUpdate->bindValue(":allowpochven", (int)isset($_POST["allowPochven"]), \PDO::PARAM_INT);
                 $optionUpdate->bindValue(":allowrush", (int)isset($_POST["allowRush"]), \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":contractexpiration", $_POST["contractExpiration"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":contracttimetocomplete", $_POST["contractTimeToComplete"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":rushcontractexpiration", $_POST["rushContractExpiration"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":rushcontracttimetocomplete", $_POST["rushContractTimeToComplete"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":rushmultiplier", $_POST["rushMultiplier"]);
                 $optionUpdate->bindParam(":nonstandardmultiplier", $_POST["nonstandardMultiplier"]);
                 $optionUpdate->bindParam(":maxvolume", $_POST["maxVolume"], \PDO::PARAM_INT);
@@ -290,6 +318,9 @@
                 $optionUpdate->bindParam(":maxpochvenvolume", $_POST["maxPochvenVolume"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":pochvenprice", $_POST["pochvenPrice"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":collateralpremium", $_POST["collateralPremium"]);
+                $optionUpdate->bindParam(":highcollateralcutoff", $_POST["highCollateralCutoff"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":highcollateralpenalty", $_POST["highCollateralPenalty"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":highcollateralblockaderunnerpenalty", $_POST["highCollateralBlockadeRunnerPenalty"], \PDO::PARAM_INT);
                 $optionUpdate->execute();
             }
             catch (\Exception $error) {
@@ -563,35 +594,46 @@
             
             $optionQuery = $this->databaseConnection->prepare("SELECT * FROM options ORDER BY iteration DESC LIMIT 1");
             $optionQuery->execute();
-            $optionData = $optionQuery->fetchAll(\PDO::FETCH_ASSOC);
+            $optionData = $optionQuery->fetch(\PDO::FETCH_ASSOC);
 
             if (!empty($optionData)) {
 
                 //General Settings
-                $this->contractCorporation = $optionData[0]["contractcorporation"];
-                $this->maxVolume = $optionData[0]["maxvolume"];
-                $this->maxCollateral = $optionData[0]["maxcollateral"];
-                $this->blockadeRunnerCutoff = $optionData[0]["blockaderunnercutoff"];
-                $this->maxThresholdPrice = $optionData[0]["maxthresholdprice"];
-                $this->gatePrice = $optionData[0]["gateprice"];
+                $this->contractCorporation = $optionData["contractcorporation"];
                 //Restrictions
-                $this->onlyApprovedRoutes = boolval($optionData[0]["onlyapprovedroutes"]);
-                $this->allowHighsecToHighsec = boolval($optionData[0]["allowhighsectohighsec"]);
-                $this->allowLowsec = boolval($optionData[0]["allowlowsec"]);
-                $this->allowNullsec = boolval($optionData[0]["allownullsec"]);
-                $this->allowWormholes = boolval($optionData[0]["allowwormholes"]);
-                $this->allowPochven = boolval($optionData[0]["allowpochven"]);
-                $this->allowRush = boolval($optionData[0]["allowrush"]);
+                $this->onlyApprovedRoutes = boolval($optionData["onlyapprovedroutes"]);
+                $this->allowHighsecToHighsec = boolval($optionData["allowhighsectohighsec"]);
+                $this->allowLowsec = boolval($optionData["allowlowsec"]);
+                $this->allowNullsec = boolval($optionData["allownullsec"]);
+                $this->allowWormholes = boolval($optionData["allowwormholes"]);
+                $this->allowPochven = boolval($optionData["allowpochven"]);
+                $this->allowRush = boolval($optionData["allowrush"]);
+                //Timing Controls
+                $this->contractExpiration = $optionData["contractexpiration"];
+                $this->contractTimeToComplete = $optionData["contracttimetocomplete"];
+                $this->rushContractExpiration = $optionData["rushcontractexpiration"];
+                $this->rushContractTimeToComplete = $optionData["rushcontracttimetocomplete"];
+                //Pricing Controls
+                $this->maxThresholdPrice = $optionData["maxthresholdprice"];
+                $this->gatePrice = $optionData["gateprice"];
+                $this->wormholePrice = $optionData["wormholeprice"];
+                $this->pochvenPrice = $optionData["pochvenprice"];
                 //Volume Controls
-                $this->highsecToHighsecMaxVolume = $optionData[0]["highsectohighsecmaxvolume"];
-                $this->maxWormholeVolume = $optionData[0]["maxwormholevolume"];
-                $this->maxPochvenVolume = $optionData[0]["maxpochvenvolume"];
-                //Pricing
-                $this->rushMultiplier = $optionData[0]["rushmultiplier"];
-                $this->nonstandardMultiplier = $optionData[0]["nonstandardmultiplier"];
-                $this->wormholePrice = $optionData[0]["wormholeprice"];
-                $this->pochvenPrice = $optionData[0]["pochvenprice"];
-                $this->collateralPremium = $optionData[0]["collateralpremium"];
+                $this->maxVolume = $optionData["maxvolume"];
+                $this->blockadeRunnerCutoff = $optionData["blockaderunnercutoff"];
+                $this->highsecToHighsecMaxVolume = $optionData["highsectohighsecmaxvolume"];
+                $this->maxWormholeVolume = $optionData["maxwormholevolume"];
+                $this->maxPochvenVolume = $optionData["maxpochvenvolume"];
+                //Collateral Controls
+                $this->maxCollateral = $optionData["maxcollateral"];
+                $this->collateralPremium = $optionData["collateralpremium"];
+                //Collateral Penalty Controls
+                $this->highCollateralCutoff = $optionData["highcollateralcutoff"];
+                $this->highCollateralPenalty = $optionData["highcollateralpenalty"];
+                $this->highCollateralBlockadeRunnerPenalty = $optionData["highcollateralblockaderunnerpenalty"];
+                //Multiplier Controls
+                $this->rushMultiplier = $optionData["rushmultiplier"];
+                $this->nonstandardMultiplier = $optionData["nonstandardmultiplier"];
 
                 return true;
             }

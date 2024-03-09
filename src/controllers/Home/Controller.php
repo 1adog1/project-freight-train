@@ -10,11 +10,6 @@
 
         //General Settings
         public $contractCorporation;
-        private $maxVolume;
-        private $maxCollateral;
-        private $blockadeRunnerCutoff;
-        private $maxThresholdPrice;
-        private $gatePrice;
         //Restrictions
         private $onlyApprovedRoutes;
         private $allowHighsecToHighsec;
@@ -23,26 +18,44 @@
         private $allowWormholes;
         private $allowPochven;
         public $allowRush;
+        //Timing Controls
+        private $contractExpiration;
+        private $contractTimeToComplete;
+        private $rushContractExpiration;
+        private $rushContractTimeToComplete;
+        //Pricing Controls
+        private $maxThresholdPrice;
+        private $gatePrice;
+        private $wormholePrice;
+        private $pochvenPrice;
         //Volume Controls
+        private $maxVolume;
+        private $blockadeRunnerCutoff;
         private $highsecToHighsecMaxVolume;
         private $maxWormholeVolume;
         private $maxPochvenVolume;
-        //Pricing
+        //Collateral Controls
+        private $maxCollateral;
+        private $collateralPremium;
+        //Collateral Penalty Controls
+        private $highCollateralCutoff;
+        private $highCollateralPenalty;
+        private $highCollateralBlockadeRunnerPenalty;
+        //Multiplier Controls
         private $rushMultiplier;
         private $nonstandardMultiplier;
-        private $wormholePrice;
-        private $pochvenPrice;
-        private $collateralPremium;
 
         public $quoteProcessed = false;
         public $priceModel;
-        public $multipliers = [];
+        public $penalties = [];
         public $unitPriceString;
         public $collateralPremiumString;
         public $volumeString;
         public $destinationString;
         public $collateralString;
         public $priceString;
+        public $expirationString;
+        public $timeToCompleteString;
         
         public function __construct(
             private \Ridley\Core\Dependencies\DependencyManager $dependencies
@@ -138,6 +151,8 @@
                 $this->destinationString = $destinationData["name"];
                 $this->volumeString = number_format($volume) . " m³";
                 $this->collateralString = number_format($collateral) . " ISK";
+                $this->expirationString = (($rush and $this->allowRush) ? $this->rushContractExpiration : $this->contractExpiration) . " Days";
+                $this->timeToCompleteString = (($rush and $this->allowRush) ? $this->rushContractTimeToComplete : $this->contractTimeToComplete) . " Days";
 
                 //Route Calculation
                 if ($routeData !== false) {
@@ -146,7 +161,7 @@
                         $this->priceCheck($originData, $destinationData, $collateral, $volume, $rush, $routeData);
                     }
                     elseif ($routeData["pricemodel"] == "Fixed") {
-                        $this->fixedPriceCheck($collateral, $rush, $routeData);
+                        $this->fixedPriceCheck($collateral, $volume, $rush, $routeData);
                     }
                     elseif ($routeData["pricemodel"] == "Range") {
                         $this->rangePriceCheck($originData, $destinationData, $collateral, $volume, $rush, $routeData);
@@ -219,10 +234,19 @@
             
             $tierPrice = $tierQuery->fetchColumn();
 
-            $standardPrice = ($tierPrice !== false) ? $tierPrice : $this->maxThresholdPrice;
+            if (isset($routeData["basepriceoverride"])) {
+                $standardPrice = $routeData["basepriceoverride"];
+            }
+            elseif ($tierPrice !== false) {
+                $standardPrice = $tierPrice;
+            }
+            else {
+                $standardPrice = $this->maxThresholdPrice;
+            }
+
             $this->unitPriceString = number_format($standardPrice) . " ISK/m³";
             $basePrice = ($routeData["basepriceoverride"] ?? $standardPrice) * $volume;
-            $adjustedPrice = $this->adjustForCollateral($basePrice, $collateral, $routeData);
+            $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
             $this->priceString = number_format($specialAdjustedPrice) . " ISK";
@@ -267,7 +291,7 @@
 
             $this->unitPriceString = number_format(($routeData["basepriceoverride"] ?? $this->gatePrice)) . " ISK/Jump/m³";
             $basePrice = ($routeData["basepriceoverride"] ?? $this->gatePrice) * $jumps * $volume;
-            $adjustedPrice = $this->adjustForCollateral($basePrice, $collateral, $routeData);
+            $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
             $this->priceString = number_format($specialAdjustedPrice) . " ISK";
@@ -280,7 +304,7 @@
             $this->priceModel = "Wormhole";
             $this->unitPriceString = number_format(($routeData["basepriceoverride"] ?? $this->wormholePrice)) . " ISK/m³";
             $basePrice = ($routeData["basepriceoverride"] ?? $this->wormholePrice) * $volume;
-            $adjustedPrice = $this->adjustForCollateral($basePrice, $collateral, $routeData);
+            $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
             $this->priceString = number_format($specialAdjustedPrice) . " ISK";
@@ -293,7 +317,7 @@
             $this->priceModel = "Pochven";
             $this->unitPriceString = number_format(($routeData["basepriceoverride"] ?? $this->pochvenPrice)) . " ISK/m³";
             $basePrice = ($routeData["basepriceoverride"] ?? $this->pochvenPrice) * $volume;
-            $adjustedPrice = $this->adjustForCollateral($basePrice, $collateral, $routeData);
+            $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
             $this->priceString = number_format($specialAdjustedPrice) . " ISK";
@@ -301,12 +325,12 @@
 
         }
 
-        private function fixedPriceCheck($collateral, $rush, $routeData) {
+        private function fixedPriceCheck($collateral, $volume, $rush, $routeData) {
 
             $this->priceModel = "Fixed";
             $basePrice = $routeData["basepriceoverride"];
             $this->unitPriceString = number_format($basePrice) . " ISK";
-            $adjustedPrice = $this->adjustForCollateral($basePrice, $collateral, $routeData);
+            $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
             $this->priceString = number_format($specialAdjustedPrice) . " ISK";
@@ -317,24 +341,42 @@
         private function adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData) {
 
             if ($rush and $this->allowRush) {
-                $this->multipliers["Rush"] = number_format($this->rushMultiplier, 4) . "×";
+                $this->penalties["Rush"] = number_format($this->rushMultiplier, 4) . "×";
             }
             if ($routeData === false) {
-                $this->multipliers["Non-Standard"] = number_format($this->nonstandardMultiplier, 4) . "×";
+                $this->penalties["Non-Standard"] = number_format($this->nonstandardMultiplier, 4) . "×";
             }
 
             return $adjustedPrice * (($rush and $this->allowRush) ? $this->rushMultiplier : 1) * (($routeData === false) ? $this->nonstandardMultiplier : 1);
 
         }
 
-        private function adjustForCollateral($basePrice, $collateral, $routeData) {
+        private function adjustForCollateral($basePrice, $volume, $collateral, $routeData) {
 
             $percentage = $routeData["collateralpremiumoverride"] ?? $this->collateralPremium;
             $premiumMultiplier = $percentage / 100;
 
-            $this->collateralPremiumString = number_format(($collateral * $premiumMultiplier)) . " ISK";
+            if ($collateral > $this->highCollateralCutoff) {
 
-            return $basePrice + ($collateral * $premiumMultiplier);
+                $basePremium = $this->highCollateralCutoff * $premiumMultiplier;
+                $highCollateralMagnitude = ($volume < $this->blockadeRunnerCutoff) ? $this->highCollateralBlockadeRunnerPenalty : $this->highCollateralPenalty;
+                $highCollateralMultiplier = ceil(($collateral - $this->highCollateralCutoff) / $this->highCollateralCutoff);
+                $totalHighCollateral = $highCollateralMagnitude * $highCollateralMultiplier;
+                $totalPremium = $basePremium + $totalHighCollateral;
+
+                $this->collateralPremiumString = number_format($basePremium) . " ISK";
+                $this->penalties["High Collateral"] = "+" . number_format($totalHighCollateral) . " ISK";
+
+            }
+            else {
+
+                $totalPremium = $collateral * $premiumMultiplier;
+
+                $this->collateralPremiumString = number_format($totalPremium) . " ISK";
+
+            }
+
+            return $basePrice + $totalPremium;
 
         }
 
@@ -440,35 +482,46 @@
             
             $optionQuery = $this->databaseConnection->prepare("SELECT * FROM options ORDER BY iteration DESC LIMIT 1");
             $optionQuery->execute();
-            $optionData = $optionQuery->fetchAll(\PDO::FETCH_ASSOC);
+            $optionData = $optionQuery->fetch(\PDO::FETCH_ASSOC);
 
             if (!empty($optionData)) {
 
                 //General Settings
-                $this->contractCorporation = $optionData[0]["contractcorporation"];
-                $this->maxVolume = (int)$optionData[0]["maxvolume"];
-                $this->maxCollateral = (int)$optionData[0]["maxcollateral"];
-                $this->blockadeRunnerCutoff = (int)$optionData[0]["blockaderunnercutoff"];
-                $this->maxThresholdPrice = (int)$optionData[0]["maxthresholdprice"];
-                $this->gatePrice = (int)$optionData[0]["gateprice"];
+                $this->contractCorporation = $optionData["contractcorporation"];
                 //Restrictions
-                $this->onlyApprovedRoutes = boolval($optionData[0]["onlyapprovedroutes"]);
-                $this->allowHighsecToHighsec = boolval($optionData[0]["allowhighsectohighsec"]);
-                $this->allowLowsec = boolval($optionData[0]["allowlowsec"]);
-                $this->allowNullsec = boolval($optionData[0]["allownullsec"]);
-                $this->allowWormholes = boolval($optionData[0]["allowwormholes"]);
-                $this->allowPochven = boolval($optionData[0]["allowpochven"]);
-                $this->allowRush = boolval($optionData[0]["allowrush"]);
+                $this->onlyApprovedRoutes = boolval($optionData["onlyapprovedroutes"]);
+                $this->allowHighsecToHighsec = boolval($optionData["allowhighsectohighsec"]);
+                $this->allowLowsec = boolval($optionData["allowlowsec"]);
+                $this->allowNullsec = boolval($optionData["allownullsec"]);
+                $this->allowWormholes = boolval($optionData["allowwormholes"]);
+                $this->allowPochven = boolval($optionData["allowpochven"]);
+                $this->allowRush = boolval($optionData["allowrush"]);
+                //Timing Controls
+                $this->contractExpiration = (int)$optionData["contractexpiration"];
+                $this->contractTimeToComplete = (int)$optionData["contracttimetocomplete"];
+                $this->rushContractExpiration = (int)$optionData["rushcontractexpiration"];
+                $this->rushContractTimeToComplete = (int)$optionData["rushcontracttimetocomplete"];
+                //Pricing Controls
+                $this->maxThresholdPrice = (int)$optionData["maxthresholdprice"];
+                $this->gatePrice = (int)$optionData["gateprice"];
+                $this->wormholePrice = (int)$optionData["wormholeprice"];
+                $this->pochvenPrice = (int)$optionData["pochvenprice"];
                 //Volume Controls
-                $this->highsecToHighsecMaxVolume = (int)$optionData[0]["highsectohighsecmaxvolume"];
-                $this->maxWormholeVolume = (int)$optionData[0]["maxwormholevolume"];
-                $this->maxPochvenVolume = (int)$optionData[0]["maxpochvenvolume"];
-                //Pricing
-                $this->rushMultiplier = (float)$optionData[0]["rushmultiplier"];
-                $this->nonstandardMultiplier = (float)$optionData[0]["nonstandardmultiplier"];
-                $this->wormholePrice = (int)$optionData[0]["wormholeprice"];
-                $this->pochvenPrice = (int)$optionData[0]["pochvenprice"];
-                $this->collateralPremium = (float)$optionData[0]["collateralpremium"];
+                $this->maxVolume = (int)$optionData["maxvolume"];
+                $this->blockadeRunnerCutoff = (int)$optionData["blockaderunnercutoff"];
+                $this->highsecToHighsecMaxVolume = (int)$optionData["highsectohighsecmaxvolume"];
+                $this->maxWormholeVolume = (int)$optionData["maxwormholevolume"];
+                $this->maxPochvenVolume = (int)$optionData["maxpochvenvolume"];
+                //Collateral Controls
+                $this->maxCollateral = (int)$optionData["maxcollateral"];
+                $this->collateralPremium = (float)$optionData["collateralpremium"];
+                //Collateral Penalty Controls
+                $this->highCollateralCutoff = (int)$optionData["highcollateralcutoff"];
+                $this->highCollateralPenalty = (int)$optionData["highcollateralpenalty"];
+                $this->highCollateralBlockadeRunnerPenalty = (int)$optionData["highcollateralblockaderunnerpenalty"];
+                //Multiplier Controls
+                $this->rushMultiplier = (float)$optionData["rushmultiplier"];
+                $this->nonstandardMultiplier = (float)$optionData["nonstandardmultiplier"];
 
                 return true;
             }

@@ -36,13 +36,21 @@
 
         private function getSystems() {
 
-            $optionQuery = $this->databaseConnection->prepare("SELECT * FROM options ORDER BY iteration DESC LIMIT 1");
+            $optionQuery = $this->databaseConnection->prepare(
+                "SELECT 
+                    onlyapprovedroutes, 
+                    allowlowsec, 
+                    allownullsec, 
+                    allowwormholes, 
+                    allowpochven
+                FROM options ORDER BY iteration DESC LIMIT 1"
+            );
             $optionQuery->execute();
-            $optionData = $optionQuery->fetchAll(\PDO::FETCH_ASSOC);
+            $optionData = $optionQuery->fetch(\PDO::FETCH_ASSOC);
 
             if (!empty($optionData)) {
 
-                if (boolval($optionData[0]["onlyapprovedroutes"])) {
+                if (boolval($optionData["onlyapprovedroutes"])) {
 
                     $queryString = "SELECT name FROM evesystems WHERE
                         id IN (
@@ -54,10 +62,10 @@
                 }
                 else {
 
-                    $allowLowsec = boolval($optionData[0]["allowlowsec"]);
-                    $allowNullsec = boolval($optionData[0]["allownullsec"]);
-                    $allowWormholes = boolval($optionData[0]["allowwormholes"]);
-                    $allowPochven = boolval($optionData[0]["allowpochven"]);
+                    $allowLowsec = boolval($optionData["allowlowsec"]);
+                    $allowNullsec = boolval($optionData["allownullsec"]);
+                    $allowWormholes = boolval($optionData["allowwormholes"]);
+                    $allowPochven = boolval($optionData["allowpochven"]);
 
                     $allowedClassList = ["'Highsec'"];
 

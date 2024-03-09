@@ -105,34 +105,30 @@
                     <label for="contractCorporation" class="form-label" style="margin-top: 2.25rem !important;">Contract Corporation</label>
                     <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->contractCorporation); ?>" name="contractCorporation" id="contractCorporation" required>
 
-                    <label for="maxVolume" class="form-label mt-3">Max Volume</label>
+                    <div class="h3 mb-0" style="margin-top: 3rem !important;">Timing Controls</div>
+
+                    <label for="contractExpiration" class="form-label" style="margin-top: 2.25rem !important;">Contract Expiration</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxVolume); ?>" name="maxVolume" id="maxVolume" required>
-                        <span class="input-group-text">m³</span>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->contractExpiration); ?>" name="contractExpiration" id="contractExpiration" required>
+                        <span class="input-group-text">Days</span>
                     </div>
 
-                    <label for="maxCollateral" class="form-label mt-3">Max Collateral</label>
+                    <label for="contractTimeToComplete" class="form-label mt-3">Contract Time to Complete</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxCollateral); ?>" name="maxCollateral" id="maxCollateral" required>
-                        <span class="input-group-text">ISK</span>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->contractTimeToComplete); ?>" name="contractTimeToComplete" id="contractTimeToComplete" required>
+                        <span class="input-group-text">Days</span>
                     </div>
 
-                    <label for="blockadeRunnerCutoff" class="form-label mt-3">Blockade Runner Cutoff</label>
+                    <label for="rushContractExpiration" class="form-label mt-3">Rush Contract Expiration</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->blockadeRunnerCutoff); ?>" name="blockadeRunnerCutoff" id="blockadeRunnerCutoff" required>
-                        <span class="input-group-text">m³</span>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->rushContractExpiration); ?>" name="rushContractExpiration" id="rushContractExpiration" required>
+                        <span class="input-group-text">Days</span>
                     </div>
 
-                    <label for="maxThresholdPrice" class="form-label mt-3">Max Tier Price</label>
+                    <label for="rushContractTimeToComplete" class="form-label mt-3">Rush Contract Time to Complete</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxThresholdPrice); ?>" name="maxThresholdPrice" id="maxThresholdPrice" required>
-                        <span class="input-group-text">ISK/m³</span>
-                    </div>
-
-                    <label for="gatePrice" class="form-label mt-3">Gate Price</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->gatePrice); ?>" name="gatePrice" id="gatePrice" required>
-                        <span class="input-group-text">ISK/m³/Jump</span>
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->rushContractTimeToComplete); ?>" name="rushContractTimeToComplete" id="rushContractTimeToComplete" required>
+                        <span class="input-group-text">Days</span>
                     </div>
 
                 </div>
@@ -169,12 +165,50 @@
                         <label class="form-check-label" for="allowRush">Allow Rush</label>
                     </div>
 
+                    <div class="h3 mb-0" style="margin-top: 3rem !important;">Pricing Controls</div>
+
+                    <label for="maxThresholdPrice" class="form-label" style="margin-top: 2.25rem !important;">Max Tier Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxThresholdPrice); ?>" name="maxThresholdPrice" id="maxThresholdPrice" required>
+                        <span class="input-group-text">ISK/m³</span>
+                    </div>
+
+                    <label for="gatePrice" class="form-label mt-3">Gate Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->gatePrice); ?>" name="gatePrice" id="gatePrice" required>
+                        <span class="input-group-text">ISK/m³/Jump</span>
+                    </div>
+
+                    <label for="wormholePrice" class="form-label mt-3">Wormhole Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->wormholePrice); ?>" name="wormholePrice" id="wormholePrice" required>
+                        <span class="input-group-text">ISK/m³</span>
+                    </div>
+
+                    <label for="pochvenPrice" class="form-label mt-3">Pochven Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->pochvenPrice); ?>" name="pochvenPrice" id="pochvenPrice" required>
+                        <span class="input-group-text">ISK/m³</span>
+                    </div>
+
                 </div>
                 <div class="col-xl-3">
 
-                    <div class="h3 mb-0">Specific Volume Limitations</div>
+                    <div class="h3 mb-0">Volume Controls</div>
 
-                    <label for="highsecToHighsecMaxVolume" class="form-label" style="margin-top: 2.25rem !important;">Max Highsec <-> Highsec Volume</label>
+                    <label for="maxVolume" class="form-label" style="margin-top: 2.25rem !important;">Max Volume</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxVolume); ?>" name="maxVolume" id="maxVolume" required>
+                        <span class="input-group-text">m³</span>
+                    </div>
+
+                    <label for="blockadeRunnerCutoff" class="form-label mt-3">Blockade Runner Cutoff</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->blockadeRunnerCutoff); ?>" name="blockadeRunnerCutoff" id="blockadeRunnerCutoff" required>
+                        <span class="input-group-text">m³</span>
+                    </div>
+
+                    <label for="highsecToHighsecMaxVolume" class="form-label mt-3">Max Highsec <-> Highsec Volume</label>
                     <div class="input-group">
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->highsecToHighsecMaxVolume); ?>" name="highsecToHighsecMaxVolume" id="highsecToHighsecMaxVolume" required>
                         <span class="input-group-text">m³</span>
@@ -192,10 +226,44 @@
                         <span class="input-group-text">m³</span>
                     </div>
 
+                    <div class="h3 mb-0" style="margin-top: 3rem !important;">Collateral Controls</div>
+
+                    <label for="maxCollateral" class="form-label" style="margin-top: 2.25rem !important;">Max Collateral</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxCollateral); ?>" name="maxCollateral" id="maxCollateral" required>
+                        <span class="input-group-text">ISK</span>
+                    </div>
+
+                    <label for="collateralPremium" class="form-label mt-3">Collateral Premium</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->collateralPremium); ?>" name="collateralPremium" id="collateralPremium" required>
+                        <span class="input-group-text">%</span>
+                    </div>
+
                 </div>
                 <div class="col-xl-3">
 
-                    <div class="h3 mb-0">Specific Pricing</div>
+                    <div class="h3 mb-0">Collateral Penalties</div>
+
+                    <label for="highCollateralCutoff" class="form-label" style="margin-top: 2.25rem !important;">High Collateral Cutoff</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->highCollateralCutoff); ?>" name="highCollateralCutoff" id="highCollateralCutoff" required>
+                        <span class="input-group-text">ISK</span>
+                    </div>
+
+                    <label for="highCollateralPenalty" class="form-label mt-3">High Collateral Penalty</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->highCollateralPenalty); ?>" name="highCollateralPenalty" id="highCollateralPenalty" required>
+                        <span class="input-group-text">ISK</span>
+                    </div>
+
+                    <label for="highCollateralBlockadeRunnerPenalty" class="form-label mt-3">High Collateral Blockade Runner Penalty</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->highCollateralBlockadeRunnerPenalty); ?>" name="highCollateralBlockadeRunnerPenalty" id="highCollateralBlockadeRunnerPenalty" required>
+                        <span class="input-group-text">ISK</span>
+                    </div>
+
+                    <div class="h3 mb-0" style="margin-top: 3rem !important;">Multiplier Controls</div>
 
                     <label for="rushMultiplier" class="form-label" style="margin-top: 2.25rem !important;">Rush Multiplier</label>
                     <div class="input-group">
@@ -207,24 +275,6 @@
                     <div class="input-group">
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->nonstandardMultiplier); ?>" name="nonstandardMultiplier" id="nonstandardMultiplier" required>
                         <span class="input-group-text">×</span>
-                    </div>
-
-                    <label for="wormholePrice" class="form-label mt-3">Wormhole Price</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->wormholePrice); ?>" name="wormholePrice" id="wormholePrice" required>
-                        <span class="input-group-text">ISK/m³</span>
-                    </div>
-
-                    <label for="pochvenPrice" class="form-label mt-3">Pochven Price</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->pochvenPrice); ?>" name="pochvenPrice" id="pochvenPrice" required>
-                        <span class="input-group-text">ISK/m³</span>
-                    </div>
-
-                    <label for="collateralPremium" class="form-label mt-3">Collateral Premium</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->collateralPremium); ?>" name="collateralPremium" id="collateralPremium" required>
-                        <span class="input-group-text">%</span>
                     </div>
 
                     <button type="submit" name="Action" value="Update_Settings" class="btn btn-primary w-100 mt-4">Update Settings</button>

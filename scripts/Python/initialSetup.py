@@ -121,7 +121,37 @@ try:
     deletionCursor.execute("DELETE FROM options")
 
     print("[{Time}] Inserting Default Options...".format(Time=getTimeMark()))
-    optionsUpdate = "INSERT INTO options (contractcorporation, onlyapprovedroutes, allowhighsectohighsec, allowlowsec, allownullsec, allowwormholes, allowpochven, allowrush, rushmultiplier, nonstandardmultiplier, maxvolume, maxcollateral, blockaderunnercutoff, maxthresholdprice, highsectohighsecmaxvolume, gateprice, maxwormholevolume, wormholeprice, maxpochvenvolume, pochvenprice, collateralpremium) VALUES ('CCP Alliance', 0, 0, 1, 1, 1, 1, 1, 1.5, 2, 320000, 10000000000, 13000, 1000, 1000000, 10, 40000, 1500, 40000, 2000, 0.01)"
+    optionsUpdate = """INSERT INTO options (
+        contractcorporation, 
+        onlyapprovedroutes, 
+        allowhighsectohighsec, 
+        allowlowsec, 
+        allownullsec, 
+        allowwormholes, 
+        allowpochven, 
+        allowrush, 
+        contractexpiration,
+        contracttimetocomplete,
+        rushcontractexpiration,
+        rushcontracttimetocomplete,
+        rushmultiplier, 
+        nonstandardmultiplier, 
+        maxvolume, 
+        maxcollateral, 
+        blockaderunnercutoff, 
+        maxthresholdprice, 
+        highsectohighsecmaxvolume, 
+        gateprice, 
+        maxwormholevolume, 
+        wormholeprice, 
+        maxpochvenvolume, 
+        pochvenprice, 
+        collateralpremium,
+        highcollateralcutoff,
+        highcollateralpenalty,
+        highcollateralblockaderunnerpenalty
+    ) VALUES (
+        'CCP Alliance', 0, 0, 1, 1, 1, 1, 1, 7, 3, 3, 1, 1.5, 2, 320000, 10000000000, 13000, 1000, 1000000, 10, 40000, 1500, 40000, 2000, 0.25, 3000000000, 50000000, 10000000)"""
     updateCursor.execute(optionsUpdate)
 
     print("[{Time}] Committing Transaction...\n".format(Time=getTimeMark()))
