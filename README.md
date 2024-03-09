@@ -28,6 +28,7 @@ The core of this framework requires the following:
 
 * Rename the Configuration File in `/config/config.ini.dist` to `/config/config.ini` and setup as needed.
   * If you need to move this file, you'll need to change the path it's accessed from in `/config/config.php` and `/scripts/Python/initialSetup.py`
+* Rename `/config/frontPage.html.dist` to `/config/frontPage.html` and customize as desired.
 * Access the webserver at least once to initialize the database.
 * Run `/scripts/Python/initialSetup.py` to populate the database with static information about Eve's geography as well as default routing options.
 
