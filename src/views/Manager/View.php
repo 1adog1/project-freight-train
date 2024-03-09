@@ -31,7 +31,7 @@
                                 <th scope="col" style="width: 15%;">Start</th>
                                 <th scope="col" style="width: 15%;">End</th>
                                 <th scope="col" style="width: 10%;">Model</th>
-                                <th scope="col" style="width: 15%;">Price</th>
+                                <th scope="col" style="width: 15%;">Price / Gate Price</th>
                                 <th scope="col" style="width: 10%;">Premium</th>
                                 <th scope="col" style="width: 12.5%;">Max Volume</th>
                                 <th scope="col" style="width: 15%;">Max Collateral</th>
@@ -142,7 +142,7 @@
                     </div>
                     <div class="form-check form-switch ms-4" style="margin-top: 1.25rem !important;">
                         <input class="form-check-input" type="checkbox" role="switch" name="allowHighsecToHighsec" id="allowHighsecToHighsec" value="true" <?php echo $this->controller->allowHighsecToHighsec ? "checked" : ""; ?>>
-                        <label class="form-check-label" for="allowHighsecToHighsec">Allow Highsec <-> Highsec</label>
+                        <label class="form-check-label" for="allowHighsecToHighsec">Allow Highsec ↔ Highsec</label>
                     </div>
                     <div class="form-check form-switch ms-4" style="margin-top: 1.25rem !important;">
                         <input class="form-check-input" type="checkbox" role="switch" name="allowLowsec" id="allowLowsec" value="true" <?php echo $this->controller->allowLowsec ? "checked" : ""; ?>>
@@ -208,7 +208,7 @@
                         <span class="input-group-text">m³</span>
                     </div>
 
-                    <label for="highsecToHighsecMaxVolume" class="form-label mt-3">Max Highsec <-> Highsec Volume</label>
+                    <label for="highsecToHighsecMaxVolume" class="form-label mt-3">Max Highsec ↔ Highsec Volume</label>
                     <div class="input-group">
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->highsecToHighsecMaxVolume); ?>" name="highsecToHighsecMaxVolume" id="highsecToHighsecMaxVolume" required>
                         <span class="input-group-text">m³</span>
@@ -384,7 +384,10 @@
                 <td><?php echo htmlspecialchars($eachRoute["start"]); ?></td>
                 <td><?php echo htmlspecialchars($eachRoute["end"]); ?></td>
                 <td><?php echo htmlspecialchars($eachRoute["model"]); ?></td>
-                <td><?php echo isset($eachRoute["price"]) ? htmlspecialchars(number_format($eachRoute["price"])) . " ISK" : ""; ?></td>
+                <td>
+                    <?php echo isset($eachRoute["price"]) ? htmlspecialchars(number_format($eachRoute["price"])) . " ISK" : ""; ?>
+                    <?php echo isset($eachRoute["gateprice"]) ? " / " . htmlspecialchars(number_format($eachRoute["gateprice"])) . " ISK" : ""; ?>
+                </td>
                 <td><?php echo isset($eachRoute["premium"]) ? htmlspecialchars($eachRoute["premium"]) . " %" : ""; ?></td>
                 <td><?php echo isset($eachRoute["maxvolume"]) ? htmlspecialchars(number_format($eachRoute["maxvolume"])) . " m³" : ""; ?></td>
                 <td><?php echo isset($eachRoute["maxcollateral"]) ? htmlspecialchars(number_format($eachRoute["maxcollateral"])) . " ISK" : ""; ?></td>
@@ -417,7 +420,10 @@
 
                             <div class="alert alert-primary d-flex align-items-center mt-3" role="alert">
                                 <i class="bi bi-exclamation-triangle me-2"></i>
-                                <div>Using Range Only pricing for Pochven or Wormhole routes will produce unintuitive and possibly extremely high prices. Gate Only pricing will be overridden on Pochven and Wormhole routes.</div>
+                                <div>
+                                    Using the Range Only model for Pochven or Wormhole routes will produce unintuitive and possibly extremely high prices. 
+                                    <br>The Gate Only model will be overridden on Pochven and Wormhole routes.
+                                </div>
                             </div>
 
                             <div class="row mt-3">
@@ -462,10 +468,16 @@
                                 </div>
                                 <div class="col-xl-3">
 
-                                    <label for="route_price" class="form-label h5">Price Override</label>
+                                    <label for="route_price" class="form-label h5">Base Price Override</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="route_price" id="route_price">
-                                        <span class="input-group-text">ISK</span>
+                                        <span class="input-group-text">ISK(/m³)</span>
+                                    </div>
+
+                                    <label for="route_gate_price" class="form-label h5 mt-3">Gate Price Override</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="route_gate_price" id="route_gate_price">
+                                        <span class="input-group-text">ISK/Jump/m³</span>
                                     </div>
 
                                     <label for="route_premium" class="form-label h5 mt-3">Collateral Premium Override</label>

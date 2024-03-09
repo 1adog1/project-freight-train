@@ -87,13 +87,13 @@
         ["Name" => "start", "Type" => "BIGINT"],
         ["Name" => "end", "Type" => "BIGINT"],
         ["Name" => "basepriceoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
+        ["Name" => "gatepriceoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "pricemodel", "Type" => "TEXT"],
         ["Name" => "collateralpremiumoverride", "Type" => "NUMERIC(8,4)", "Special" => "DEFAULT NULL"],
         ["Name" => "maxvolumeoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "maxcollateraloverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "", "Type" => "", "Special" => "CONSTRAINT PK_ROUTES_MUST_BE_UNIQUE PRIMARY KEY (start, end)"],
-        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT CHK_FIXED_NEEDS_PRICE CHECK (pricemodel != 'Fixed' OR basepriceoverride IS NOT NULL)"],
-        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT CHK_NO_STANDARD_PRICE_OVERRIDE CHECK (pricemodel != 'Standard' OR basepriceoverride IS NULL)"]
+        ["Name" => "", "Type" => "", "Special" => "CONSTRAINT CHK_FIXED_NEEDS_PRICE CHECK (pricemodel != 'Fixed' OR basepriceoverride IS NOT NULL)"]
     );
 
     $siteDatabase->register(

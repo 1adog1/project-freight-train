@@ -74,6 +74,7 @@
                     endsystem.name AS end, 
                     routes.pricemodel AS model, 
                     routes.basepriceoverride AS price, 
+                    routes.gatepriceoverride AS gateprice,
                     routes.collateralpremiumoverride AS premium, 
                     routes.maxvolumeoverride AS maxvolume, 
                     routes.maxcollateraloverride AS maxcollateral

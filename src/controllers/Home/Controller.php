@@ -12,11 +12,11 @@
         public $contractCorporation;
         //Restrictions
         private $onlyApprovedRoutes;
-        private $allowHighsecToHighsec;
+        public $allowHighsecToHighsec;
         private $allowLowsec;
         private $allowNullsec;
-        private $allowWormholes;
-        private $allowPochven;
+        public $allowWormholes;
+        public $allowPochven;
         public $allowRush;
         //Timing Controls
         private $contractExpiration;
@@ -29,16 +29,16 @@
         private $wormholePrice;
         private $pochvenPrice;
         //Volume Controls
-        private $maxVolume;
-        private $blockadeRunnerCutoff;
-        private $highsecToHighsecMaxVolume;
-        private $maxWormholeVolume;
-        private $maxPochvenVolume;
+        public $maxVolume;
+        public $blockadeRunnerCutoff;
+        public $highsecToHighsecMaxVolume;
+        public $maxWormholeVolume;
+        public $maxPochvenVolume;
         //Collateral Controls
-        private $maxCollateral;
+        public $maxCollateral;
         private $collateralPremium;
         //Collateral Penalty Controls
-        private $highCollateralCutoff;
+        public $highCollateralCutoff;
         private $highCollateralPenalty;
         private $highCollateralBlockadeRunnerPenalty;
         //Multiplier Controls
@@ -119,6 +119,7 @@
                 $routeQuery = $this->databaseConnection->prepare(
                     "SELECT 
                         basepriceoverride, 
+                        gatepriceoverride, 
                         pricemodel, 
                         collateralpremiumoverride, 
                         maxvolumeoverride, 
@@ -289,8 +290,8 @@
 
             $this->priceModel = "Gate - $jumps Jumps";
 
-            $this->unitPriceString = number_format(($routeData["basepriceoverride"] ?? $this->gatePrice)) . " ISK/Jump/m³";
-            $basePrice = ($routeData["basepriceoverride"] ?? $this->gatePrice) * $jumps * $volume;
+            $this->unitPriceString = number_format(($routeData["gatepriceoverride"] ?? $this->gatePrice)) . " ISK/Jump/m³";
+            $basePrice = ($routeData["gatepriceoverride"] ?? $this->gatePrice) * $jumps * $volume;
             $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 

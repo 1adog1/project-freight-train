@@ -67,6 +67,10 @@
 
                             $allNumericVariablesPresent = true;
                             $numericVariables = [
+                                "contractExpiration",
+                                "contractTimeToComplete",
+                                "rushContractExpiration",
+                                "rushContractTimeToComplete",
                                 "maxVolume", 
                                 "maxCollateral", 
                                 "blockadeRunnerCutoff", 
@@ -79,7 +83,10 @@
                                 "nonstandardMultiplier", 
                                 "wormholePrice", 
                                 "pochvenPrice", 
-                                "collateralPremium"
+                                "collateralPremium",
+                                "highCollateralCutoff",
+                                "highCollateralPenalty",
+                                "highCollateralBlockadeRunnerPenalty"
                             ];
 
                             foreach ($numericVariables as $each) {
@@ -181,6 +188,7 @@
                                     $_POST["route_destination"], 
                                     $_POST["route_price_model"], 
                                     ((isset($_POST["route_price"]) and $_POST["route_price"] != "") ? $_POST["route_price"] : null), 
+                                    ((isset($_POST["route_gate_price"]) and $_POST["route_gate_price"] != "") ? $_POST["route_gate_price"] : null), 
                                     ((isset($_POST["route_premium"]) and $_POST["route_premium"] != "") ? $_POST["route_premium"] : null), 
                                     ((isset($_POST["route_max_volume"]) and $_POST["route_max_volume"] != "") ? $_POST["route_max_volume"] : null),
                                     ((isset($_POST["route_max_collateral"]) and $_POST["route_max_collateral"] != "") ? $_POST["route_max_collateral"] : null),
@@ -412,6 +420,7 @@
             $destination, 
             $priceModel = null, 
             $priceOverride = null, 
+            $gatePriceOverride = null, 
             $collateralOverride = null, 
             $maxVolumeOverride = null, 
             $maxCollateralOverride = null,
@@ -425,6 +434,7 @@
                 
                 if (
                     !(is_null($priceOverride) or is_numeric($priceOverride))
+                    or !(is_null($gatePriceOverride) or is_numeric($gatePriceOverride))
                     or !(is_null($collateralOverride) or is_numeric($collateralOverride))
                     or !(is_null($maxVolumeOverride) or is_numeric($maxVolumeOverride))
                     or !(is_null($maxCollateralOverride) or is_numeric($maxCollateralOverride))
@@ -439,6 +449,7 @@
                             start, 
                             end, 
                             basepriceoverride, 
+                            gatepriceoverride, 
                             pricemodel, 
                             collateralpremiumoverride, 
                             maxvolumeoverride, 
@@ -447,6 +458,7 @@
                             :start, 
                             :end, 
                             :basepriceoverride, 
+                            :gatepriceoverride, 
                             :pricemodel, 
                             :collateralpremiumoverride, 
                             :maxvolumeoverride, 
@@ -456,6 +468,7 @@
                     $restrictionAddition->bindParam(":start", $originID);
                     $restrictionAddition->bindParam(":end", $destinationID);
                     $restrictionAddition->bindParam(":basepriceoverride", $priceOverride);
+                    $restrictionAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
                     $restrictionAddition->bindParam(":pricemodel", $priceModel);
                     $restrictionAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
                     $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
@@ -475,6 +488,7 @@
                                 start, 
                                 end, 
                                 basepriceoverride, 
+                                gatepriceoverride, 
                                 pricemodel, 
                                 collateralpremiumoverride, 
                                 maxvolumeoverride, 
@@ -483,6 +497,7 @@
                                 :start, 
                                 :end, 
                                 :basepriceoverride, 
+                                :gatepriceoverride, 
                                 :pricemodel, 
                                 :collateralpremiumoverride, 
                                 :maxvolumeoverride, 
@@ -492,6 +507,7 @@
                         $restrictionAddition->bindParam(":start", $destinationID);
                         $restrictionAddition->bindParam(":end", $originID);
                         $restrictionAddition->bindParam(":basepriceoverride", $priceOverride);
+                        $restrictionAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
                         $restrictionAddition->bindParam(":pricemodel", $priceModel);
                         $restrictionAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
                         $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
