@@ -137,6 +137,32 @@
                         <span class="input-group-text">Days</span>
                     </div>
 
+                    <div class="h3 mb-0" style="margin-top: 3rem !important;">Pricing Controls</div>
+
+                    <label for="maxThresholdPrice" class="form-label" style="margin-top: 2.25rem !important;">Max Tier Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxThresholdPrice); ?>" name="maxThresholdPrice" id="maxThresholdPrice" required>
+                        <span class="input-group-text">ISK/m³</span>
+                    </div>
+
+                    <label for="gatePrice" class="form-label mt-3">Gate Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->gatePrice); ?>" name="gatePrice" id="gatePrice" required>
+                        <span class="input-group-text">ISK/m³/Jump</span>
+                    </div>
+
+                    <label for="wormholePrice" class="form-label mt-3">Wormhole Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->wormholePrice); ?>" name="wormholePrice" id="wormholePrice" required>
+                        <span class="input-group-text">ISK/m³</span>
+                    </div>
+
+                    <label for="pochvenPrice" class="form-label mt-3">Pochven Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->pochvenPrice); ?>" name="pochvenPrice" id="pochvenPrice" required>
+                        <span class="input-group-text">ISK/m³</span>
+                    </div>
+
                 </div>
                 <div class="col-xl-3">
 
@@ -169,32 +195,6 @@
                     <div class="form-check form-switch ms-4" style="margin-top: 1.25rem !important;">
                         <input class="form-check-input" type="checkbox" role="switch" name="allowRush" id="allowRush" value="true" <?php echo $this->controller->allowRush ? "checked" : ""; ?>>
                         <label class="form-check-label" for="allowRush">Allow Rush</label>
-                    </div>
-
-                    <div class="h3 mb-0" style="margin-top: 3rem !important;">Pricing Controls</div>
-
-                    <label for="maxThresholdPrice" class="form-label" style="margin-top: 2.25rem !important;">Max Tier Price</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maxThresholdPrice); ?>" name="maxThresholdPrice" id="maxThresholdPrice" required>
-                        <span class="input-group-text">ISK/m³</span>
-                    </div>
-
-                    <label for="gatePrice" class="form-label mt-3">Gate Price</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->gatePrice); ?>" name="gatePrice" id="gatePrice" required>
-                        <span class="input-group-text">ISK/m³/Jump</span>
-                    </div>
-
-                    <label for="wormholePrice" class="form-label mt-3">Wormhole Price</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->wormholePrice); ?>" name="wormholePrice" id="wormholePrice" required>
-                        <span class="input-group-text">ISK/m³</span>
-                    </div>
-
-                    <label for="pochvenPrice" class="form-label mt-3">Pochven Price</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->pochvenPrice); ?>" name="pochvenPrice" id="pochvenPrice" required>
-                        <span class="input-group-text">ISK/m³</span>
                     </div>
 
                 </div>
