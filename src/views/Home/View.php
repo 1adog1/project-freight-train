@@ -206,9 +206,9 @@
                                         <b class="text-muted">Destination — </b> <?php echo htmlspecialchars($this->controller->destinationString); ?>
                                          <a data-copy-value="<?php echo htmlspecialchars($this->controller->destinationString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
                                         <b class="text-muted">Collateral — </b> <?php echo htmlspecialchars($this->controller->collateralString) . " ISK"; ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->collateralString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                         <a data-copy-value="<?php echo htmlspecialchars(str_replace(",", "", $this->controller->collateralString)); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
                                         <b class="text-muted">Reward — </b> <?php echo htmlspecialchars($this->controller->priceString) . " ISK"; ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->priceString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                         <a data-copy-value="<?php echo htmlspecialchars(str_replace(",", "", $this->controller->priceString)); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
                                         <b class="text-muted">Expiration — </b> <?php echo htmlspecialchars($this->controller->expirationString) . " Days"; ?>
                                          <a data-copy-value="<?php echo htmlspecialchars($this->controller->expirationString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
                                         <b class="text-muted">Time to Complete — </b> <?php echo htmlspecialchars($this->controller->timeToCompleteString) . " Days"; ?>
