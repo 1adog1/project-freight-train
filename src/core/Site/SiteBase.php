@@ -97,7 +97,7 @@
     </nav>
     <body class="background">
     
-        <div class="container-fluid">
+        <div class="container-fluid ps-4 pe-4">
             <br>
             
             <?php 
