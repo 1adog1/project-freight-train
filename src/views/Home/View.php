@@ -69,12 +69,12 @@
             <div class="row text-light mt-4">
                 <div class="col-lg-3">
                     <h3>Standard Routes</h3>
-                    <ul class="list-group" style="margin-top: 2rem !important;">
+                    <ul class="list-group small" style="margin-top: 2rem !important;">
 
                         <?php $this->routeLister(); ?>
 
                     </ul>
-                    <p class="text-danger fst-italic mt-2">Routes may override volume and collateral limits.</p>
+                    <p class="text-danger fst-italic mt-2"><i class="bi bi-database-fill-gear"></i> Routes may override volume and collateral limits.</p>
                 </div>
                 <div class="col-lg-3">
                     <h3>General Volume Limits</h3>
@@ -166,8 +166,20 @@
             foreach ($this->model->routes as $eachRoute) {
             ?>
 
-                <li class="list-group-item bg-dark text-light fw-bold">
-                    <?php echo htmlspecialchars($eachRoute["start"]); ?> → <?php echo htmlspecialchars($eachRoute["end"]); ?>
+                <li class="list-group-item bg-dark text-light">
+                    <div class="row">
+                        <div class="col-lg-7 fw-bold">
+                            <?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?>
+                        </div>
+                        <div class="col-lg-4">
+                            <?php echo htmlspecialchars($eachRoute["Model"]) . " Pricing"; ?>
+                        </div>
+                        <?php if (!empty($eachRoute["Overrides"])): ?>
+                            <div class="col-lg-1">
+                                <a class="override-popover text-danger"  tabindex="0" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" title="<?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?> Overrides" data-bs-content="<?php echo implode("<br>", $eachRoute["Overrides"]); ?>"><i class="bi bi-database-fill-gear"></i></a><br>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </li>
 
             <?php
@@ -189,12 +201,18 @@
                                     <h3 class="card-title mt-3">Hauling Quote</h3>
 
                                     <p class="mt-3">
-                                        <b class="text-muted">Contract To — </b> <?php echo htmlspecialchars($this->controller->contractCorporation); ?><br>
-                                        <b class="text-muted">Destination — </b> <?php echo htmlspecialchars($this->controller->destinationString); ?><br>
-                                        <b class="text-muted">Collateral — </b> <?php echo htmlspecialchars($this->controller->collateralString); ?><br>
-                                        <b class="text-muted">Reward — </b> <?php echo htmlspecialchars($this->controller->priceString); ?><br>
-                                        <b class="text-muted">Expiration — </b> <?php echo htmlspecialchars($this->controller->expirationString); ?><br>
-                                        <b class="text-muted">Time to Complete — </b> <?php echo htmlspecialchars($this->controller->timeToCompleteString); ?><br>
+                                        <b class="text-muted">Contract To — </b> <?php echo htmlspecialchars($this->controller->contractCorporation); ?>
+                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->contractCorporation); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                        <b class="text-muted">Destination — </b> <?php echo htmlspecialchars($this->controller->destinationString); ?>
+                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->destinationString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                        <b class="text-muted">Collateral — </b> <?php echo htmlspecialchars($this->controller->collateralString) . " ISK"; ?>
+                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->collateralString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                        <b class="text-muted">Reward — </b> <?php echo htmlspecialchars($this->controller->priceString) . " ISK"; ?>
+                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->priceString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                        <b class="text-muted">Expiration — </b> <?php echo htmlspecialchars($this->controller->expirationString) . " Days"; ?>
+                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->expirationString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                        <b class="text-muted">Time to Complete — </b> <?php echo htmlspecialchars($this->controller->timeToCompleteString) . " Days"; ?>
+                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->timeToCompleteString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
                                     </p>
 
                                 </div>
@@ -251,6 +269,22 @@
             <meta property="og:url" content="<?php echo $_SERVER["SERVER_NAME"]; ?>">
 
             <script src="/resources/js/Home.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.6.0"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.6.3"></script>
+            
+            <?php
+        }
+
+        protected function styleTemplate() {
+            ?>
+            
+            .copy-out, .override-popover {
+                border-bottom: dotted 1px;
+            }
+
+            .copy-out:hover, .override-popover:hover {
+                cursor: pointer;
+            }
             
             <?php
         }
@@ -280,6 +314,12 @@
         public function renderMeta() {
             
             $this->metaTemplate();
+            
+        }
+
+        public function renderStyle() {
+            
+            $this->styleTemplate();
             
         }
         

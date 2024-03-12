@@ -12,7 +12,7 @@
         <script src="/resources/js/jquery-ui/jquery-ui.js"></script>
         <link href="/resources/js/jquery-ui/jquery-ui.css" rel="stylesheet">
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         
         <?php 
             

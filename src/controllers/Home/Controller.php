@@ -159,9 +159,9 @@
 
                 $this->destinationString = $destinationData["name"];
                 $this->volumeString = number_format($volume) . " m³";
-                $this->collateralString = number_format($collateral) . " ISK";
-                $this->expirationString = (($rush and $this->allowRush) ? $this->rushContractExpiration : $this->contractExpiration) . " Days";
-                $this->timeToCompleteString = (($rush and $this->allowRush) ? $this->rushContractTimeToComplete : $this->contractTimeToComplete) . " Days";
+                $this->collateralString = number_format($collateral);
+                $this->expirationString = (($rush and $this->allowRush) ? $this->rushContractExpiration : $this->contractExpiration);
+                $this->timeToCompleteString = (($rush and $this->allowRush) ? $this->rushContractTimeToComplete : $this->contractTimeToComplete);
 
                 //Route Calculation
                 if ($routeData !== false) {
@@ -258,7 +258,7 @@
             $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
-            $this->priceString = number_format($specialAdjustedPrice) . " ISK";
+            $this->priceString = number_format($specialAdjustedPrice);
             $this->quoteProcessed = true;
 
         }
@@ -303,7 +303,7 @@
             $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
-            $this->priceString = number_format($specialAdjustedPrice) . " ISK";
+            $this->priceString = number_format($specialAdjustedPrice);
             $this->quoteProcessed = true;
 
         }
@@ -316,7 +316,7 @@
             $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
-            $this->priceString = number_format($specialAdjustedPrice) . " ISK";
+            $this->priceString = number_format($specialAdjustedPrice);
             $this->quoteProcessed = true;
 
         }
@@ -329,7 +329,7 @@
             $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
-            $this->priceString = number_format($specialAdjustedPrice) . " ISK";
+            $this->priceString = number_format($specialAdjustedPrice);
             $this->quoteProcessed = true;
 
         }
@@ -342,7 +342,7 @@
             $adjustedPrice = $this->adjustForCollateral($basePrice, $volume, $collateral, $routeData);
             $specialAdjustedPrice = $this->adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData);
 
-            $this->priceString = number_format($specialAdjustedPrice) . " ISK";
+            $this->priceString = number_format($specialAdjustedPrice);
             $this->quoteProcessed = true;
 
         }

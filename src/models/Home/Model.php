@@ -18,7 +18,7 @@
             $this->databaseConnection = $this->dependencies->get("Database");
 
             $this->tiers = $this->loadTiers();
-            $this->routes = $this->loadRoutes();
+            $this->loadRoutes();
 
         }
 
@@ -36,7 +36,13 @@
             $routeQuery = $this->databaseConnection->prepare(
                 "SELECT 
                     startsystem.name AS start, 
-                    endsystem.name AS end
+                    endsystem.name AS end,
+                    routes.pricemodel AS model,
+                    routes.basepriceoverride AS baseprice,
+                    routes.gatepriceoverride AS gateprice,
+                    routes.collateralpremiumoverride AS premium,
+                    routes.maxvolumeoverride AS maxvolume,
+                    routes.maxcollateraloverride AS maxcollateral
                 FROM routes 
                 INNER JOIN evesystems AS startsystem ON routes.start = startsystem.id 
                 INNER JOIN evesystems AS endsystem ON routes.end = endsystem.id
@@ -44,7 +50,33 @@
             );
             $routeQuery->execute();
 
-            return (array)$routeQuery->fetchAll(\PDO::FETCH_ASSOC);
+            $routeData = $routeQuery->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($routeData as $eachRoute) {
+                $thisRoute = [];
+                $thisRoute["Start"] = $eachRoute["start"];
+                $thisRoute["End"] = $eachRoute["end"];
+                $thisRoute["Model"] = $eachRoute["model"];
+                $thisRoute["Overrides"] = [];
+
+                if (isset($eachRoute["baseprice"])) {
+                    $thisRoute["Overrides"][] = htmlspecialchars("Base Price: " . number_format((int)$eachRoute["baseprice"]) . " ISK(/m³)");
+                }
+                if (isset($eachRoute["gateprice"])) {
+                    $thisRoute["Overrides"][] = htmlspecialchars("Gate Price: " . number_format((int)$eachRoute["gateprice"]) . " ISK/Jump/m³");
+                }
+                if (isset($eachRoute["premium"])) {
+                    $thisRoute["Overrides"][] = htmlspecialchars("Collateral Premium: " . $eachRoute["premium"] . " %");
+                }
+                if (isset($eachRoute["maxvolume"])) {
+                    $thisRoute["Overrides"][] = htmlspecialchars("Max Volume: " . number_format((int)$eachRoute["maxvolume"]) . " m³");
+                }
+                if (isset($eachRoute["maxcollateral"])) {
+                    $thisRoute["Overrides"][] = htmlspecialchars("Max Collateral: " . number_format((int)$eachRoute["maxcollateral"]) . " ISK");
+                }
+
+                $this->routes[] = $thisRoute;
+            }
 
         }
         
