@@ -108,6 +108,7 @@ try:
     ]
 
     deletionCursor = sq1Database.cursor(buffered=True)
+    checkCursor = sq1Database.cursor(buffered=True)
     updateCursor = sq1Database.cursor(buffered=True)
 
     print("[{Time}] Deleting Systems...".format(Time=getTimeMark()))
@@ -117,47 +118,52 @@ try:
     systemsUpdate = "INSERT INTO evesystems (id, name, regionid, regionname, class, security, x, y, z) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     updateCursor.executemany(systemsUpdate, systemsTuple)
 
-    print("[{Time}] Deleting Options...".format(Time=getTimeMark()))
-    deletionCursor.execute("DELETE FROM options")
+    optionsCheck = "SELECT iteration FROM options"
+    checkCursor.execute(optionsCheck)
 
-    print("[{Time}] Inserting Default Options...".format(Time=getTimeMark()))
-    optionsUpdate = """INSERT INTO options (
-        contractcorporation, 
-        onlyapprovedroutes, 
-        allowhighsectohighsec, 
-        allowlowsec, 
-        allownullsec, 
-        allowwormholes, 
-        allowpochven, 
-        allowrush, 
-        contractexpiration,
-        contracttimetocomplete,
-        rushcontractexpiration,
-        rushcontracttimetocomplete,
-        rushmultiplier, 
-        nonstandardmultiplier, 
-        maxvolume, 
-        maxcollateral, 
-        blockaderunnercutoff, 
-        maxthresholdprice, 
-        highsectohighsecmaxvolume, 
-        gateprice, 
-        maxwormholevolume, 
-        wormholeprice, 
-        maxpochvenvolume, 
-        pochvenprice, 
-        collateralpremium,
-        highcollateralcutoff,
-        highcollateralpenalty,
-        highcollateralblockaderunnerpenalty
-    ) VALUES (
-        'CCP Alliance', 0, 0, 1, 1, 1, 1, 1, 7, 3, 3, 1, 1.5, 2, 320000, 10000000000, 13000, 1000, 1000000, 10, 40000, 1500, 40000, 2000, 0.25, 3000000000, 50000000, 10000000)"""
-    updateCursor.execute(optionsUpdate)
+    if checkCursor.rowcount == 0:
+
+        print("[{Time}] Inserting Default Options...".format(Time=getTimeMark()))
+        optionsUpdate = """INSERT INTO options (
+            contractcorporation, 
+            onlyapprovedroutes, 
+            allowhighsectohighsec, 
+            allowlowsec, 
+            allownullsec, 
+            allowwormholes, 
+            allowpochven, 
+            allowrush, 
+            contractexpiration,
+            contracttimetocomplete,
+            rushcontractexpiration,
+            rushcontracttimetocomplete,
+            rushmultiplier, 
+            nonstandardmultiplier, 
+            maxvolume, 
+            maxcollateral, 
+            blockaderunnercutoff, 
+            maxthresholdprice, 
+            highsectohighsecmaxvolume, 
+            gateprice, 
+            maxwormholevolume, 
+            wormholeprice, 
+            maxpochvenvolume, 
+            pochvenprice, 
+            collateralpremium,
+            highcollateralcutoff,
+            highcollateralpenalty,
+            highcollateralblockaderunnerpenalty
+        ) VALUES (
+            'CCP Alliance', 0, 0, 1, 1, 1, 1, 1, 7, 3, 3, 1, 1.5, 2, 320000, 10000000000, 13000, 1000, 1000000, 10, 40000, 1500, 40000, 2000, 0.25, 3000000000, 50000000, 10000000)"""
+        updateCursor.execute(optionsUpdate)
+    else:
+        print("[{Time}] Default Options were not added due to Options already being present.".format(Time=getTimeMark()))
 
     print("[{Time}] Committing Transaction...\n".format(Time=getTimeMark()))
     sq1Database.commit()
 
     deletionCursor.close()
+    checkCursor.close()
     updateCursor.close()
 
 except:

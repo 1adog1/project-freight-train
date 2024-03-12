@@ -16,6 +16,7 @@ The core of this framework requires the following:
   * The `pdo_mysql` Built-In Extension
   * The `openssl` Built-In Extension
 * Python ≥ 3.11
+  * [requests](https://pypi.org/project/requests/)
   * [Python MySQL Connector](https://dev.mysql.com/downloads/connector/python/)
 * An SQL Server
   * If you are using MySQL, the Authentication Method **MUST** be the Legacy Version. PDO does not support the use of `caching_sha2_password` Authentication.
@@ -28,6 +29,7 @@ The core of this framework requires the following:
 
 * Rename the Configuration File in `/config/config.ini.dist` to `/config/config.ini` and setup as needed.
   * If you need to move this file, you'll need to change the path it's accessed from in `/config/config.php` and `/scripts/Python/initialSetup.py`
+  * In the event that Eve's geography does change, run `/scripts/Python/systemMapper.py` to regenerate the data, followed by `/scripts/Python/initialSetup.py` to update the database. 
 * Rename `/config/frontPage.html.dist` to `/config/frontPage.html` and customize as desired.
 * Access the webserver at least once to initialize the database.
 * Run `/scripts/Python/initialSetup.py` to populate the database with static information about Eve's geography as well as default routing options.

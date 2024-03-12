@@ -133,6 +133,14 @@
 
                 $routeData = $routeQuery->fetch(\PDO::FETCH_ASSOC);
 
+                if ($collateral < 0 or $volume < 0) {
+
+                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                    $this->errors[] = "Failed to Process Quote! Volume and collateral must be non-negative.";
+                    return;
+
+                }
+
                 if (!$this->checkVolume($originData, $destinationData, $routeData, $volume)) {
 
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
