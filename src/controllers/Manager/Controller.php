@@ -5,6 +5,8 @@
     class Controller implements \Ridley\Interfaces\Controller {
 
         private $databaseConnection;
+        private $logger;
+        private $csrfToken;
         public $errors = [];
 
         //General Settings
@@ -55,180 +57,189 @@
         ) {
 
             $this->databaseConnection = $this->dependencies->get("Database");
+            $this->logger = $this->dependencies->get("Logging");
+            $this->csrfToken = $this->dependencies->get("CSRF Token");
             
             if ($this->loadOptions()) {
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                    
 
-                    if (isset($_POST["Action"])) {
+                    if (isset($_POST["csrf_token"]) and $_POST["csrf_token"] === $this->csrfToken) {
 
-                        if ($_POST["Action"] == "Update_Settings") {
+                        if (isset($_POST["Action"])) {
 
-                            $allNumericVariablesPresent = true;
-                            $numericVariables = [
-                                "contractExpiration",
-                                "contractTimeToComplete",
-                                "rushContractExpiration",
-                                "rushContractTimeToComplete",
-                                "maxVolume", 
-                                "maxCollateral", 
-                                "blockadeRunnerCutoff", 
-                                "maxThresholdPrice", 
-                                "gatePrice", 
-                                "highsecToHighsecMaxVolume", 
-                                "maxWormholeVolume", 
-                                "maxPochvenVolume", 
-                                "rushMultiplier", 
-                                "nonstandardMultiplier", 
-                                "wormholePrice", 
-                                "pochvenPrice", 
-                                "collateralPremium",
-                                "highCollateralCutoff",
-                                "highCollateralPenalty",
-                                "highCollateralBlockadeRunnerPenalty"
-                            ];
+                            if ($_POST["Action"] == "Update_Settings") {
 
-                            foreach ($numericVariables as $each) {
-                                if (!isset($_POST[$each]) or !is_numeric($_POST[$each])) {
-                                    $allNumericVariablesPresent = false;
-                                    break;
+                                $allNumericVariablesPresent = true;
+                                $numericVariables = [
+                                    "contractExpiration",
+                                    "contractTimeToComplete",
+                                    "rushContractExpiration",
+                                    "rushContractTimeToComplete",
+                                    "maxVolume", 
+                                    "maxCollateral", 
+                                    "blockadeRunnerCutoff", 
+                                    "maxThresholdPrice", 
+                                    "gatePrice", 
+                                    "highsecToHighsecMaxVolume", 
+                                    "maxWormholeVolume", 
+                                    "maxPochvenVolume", 
+                                    "rushMultiplier", 
+                                    "nonstandardMultiplier", 
+                                    "wormholePrice", 
+                                    "pochvenPrice", 
+                                    "collateralPremium",
+                                    "highCollateralCutoff",
+                                    "highCollateralPenalty",
+                                    "highCollateralBlockadeRunnerPenalty"
+                                ];
+
+                                foreach ($numericVariables as $each) {
+                                    if (!isset($_POST[$each]) or !is_numeric($_POST[$each])) {
+                                        $allNumericVariablesPresent = false;
+                                        break;
+                                    }
                                 }
-                            }
 
-                            if (isset($_POST["contractCorporation"]) and $_POST["contractCorporation"] != "" and $allNumericVariablesPresent) {
-                                $this->updateOptions();
-                                $this->loadOptions();
+                                if (isset($_POST["contractCorporation"]) and $_POST["contractCorporation"] != "" and $allNumericVariablesPresent) {
+                                    $this->updateOptions();
+                                    $this->loadOptions();
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Options Failed to Update! All options must be set and numeric options must be numeric.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Add_Tier") {
+
+                                if (isset($_POST["tier_range"]) and $_POST["tier_range"] != "" and isset($_POST["tier_price"]) and $_POST["tier_price"] != "") {
+                                    $this->addOrRemoveTier("Add", $_POST["tier_range"], $_POST["tier_price"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Tier Failed to Add! Both a threshold and price must be included.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Remove_Tier") {
+
+                                if (isset($_POST["old_tier_range"]) and $_POST["old_tier_range"] != "") {
+                                    $this->addOrRemoveTier("Remove", $_POST["old_tier_range"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Tier Failed to Remove! No threshold was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Add_Restricted_Region") {
+
+                                if (isset($_POST["new_region_restriction"]) and $_POST["new_region_restriction"] != "") {
+                                    $this->addOrRemoveRestriction("Add", "Region", $_POST["new_region_restriction"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Region Failed to Add! No name was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Remove_Restricted_Region") {
+
+                                if (isset($_POST["old_region_restriction"]) and $_POST["old_region_restriction"] != "") {
+                                    $this->addOrRemoveRestriction("Remove", "Region", $_POST["old_region_restriction"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Region Failed to Remove! No name was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Add_Restricted_System") {
+
+                                if (isset($_POST["new_system_restriction"]) and $_POST["new_system_restriction"] != "") {
+                                    $this->addOrRemoveRestriction("Add", "System", $_POST["new_system_restriction"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "System Failed to Add! No name was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Remove_Restricted_System") {
+
+                                if (isset($_POST["old_system_restriction"]) and $_POST["old_system_restriction"] != "") {
+                                    $this->addOrRemoveRestriction("Remove", "System", $_POST["old_system_restriction"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "System Failed to Remove! No name was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Add_Route") {
+
+                                if (
+                                    isset($_POST["route_origin"]) 
+                                    and $_POST["route_origin"] != "" 
+                                    and isset($_POST["route_destination"]) 
+                                    and $_POST["route_destination"] != "" 
+                                    and isset($_POST["route_price_model"])
+                                    and in_array($_POST["route_price_model"], ["Standard", "Fixed", "Range", "Gate"])
+                                ) {
+                                    $this->addOrRemoveRoute(
+                                        "Add", 
+                                        $_POST["route_origin"], 
+                                        $_POST["route_destination"], 
+                                        $_POST["route_price_model"], 
+                                        ((isset($_POST["route_price"]) and $_POST["route_price"] != "") ? $_POST["route_price"] : null), 
+                                        ((isset($_POST["route_gate_price"]) and $_POST["route_gate_price"] != "") ? $_POST["route_gate_price"] : null), 
+                                        ((isset($_POST["route_premium"]) and $_POST["route_premium"] != "") ? $_POST["route_premium"] : null), 
+                                        ((isset($_POST["route_max_volume"]) and $_POST["route_max_volume"] != "") ? $_POST["route_max_volume"] : null),
+                                        ((isset($_POST["route_max_collateral"]) and $_POST["route_max_collateral"] != "") ? $_POST["route_max_collateral"] : null),
+                                        isset($_POST["route_add_inverse"])
+                                    );
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Route Failed to Add! An origin, destination, and price model must be included.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Remove_Route") {
+
+                                if (isset($_POST["old_route_origin"]) and $_POST["old_route_origin"] != "" and isset($_POST["old_route_destination"]) and $_POST["old_route_destination"] != "") {
+                                    $this->addOrRemoveRoute(
+                                        "Remove", 
+                                        $_POST["old_route_origin"], 
+                                        $_POST["old_route_destination"]
+                                    );
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Route Failed to Remove! An origin and destination combination was not sent.";
+                                }
+
                             }
                             else {
+
                                 header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "Options Failed to Update! All options must be set and numeric options must be numeric.";
+                                throw new \Exception("No valid combination of action and required secondary arguments was received.", 10002);
+            
                             }
-
-                        }
-                        elseif ($_POST["Action"] == "Add_Tier") {
-
-                            if (isset($_POST["tier_range"]) and $_POST["tier_range"] != "" and isset($_POST["tier_price"]) and $_POST["tier_price"] != "") {
-                                $this->addOrRemoveTier("Add", $_POST["tier_range"], $_POST["tier_price"]);
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "Tier Failed to Add! Both a threshold and price must be included.";
-                            }
-
-                        }
-                        elseif ($_POST["Action"] == "Remove_Tier") {
-
-                            if (isset($_POST["old_tier_range"]) and $_POST["old_tier_range"] != "") {
-                                $this->addOrRemoveTier("Remove", $_POST["old_tier_range"]);
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "Tier Failed to Remove! No threshold was sent.";
-                            }
-
-                        }
-                        elseif ($_POST["Action"] == "Add_Restricted_Region") {
-
-                            if (isset($_POST["new_region_restriction"]) and $_POST["new_region_restriction"] != "") {
-                                $this->addOrRemoveRestriction("Add", "Region", $_POST["new_region_restriction"]);
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "Region Failed to Add! No name was sent.";
-                            }
-
-                        }
-                        elseif ($_POST["Action"] == "Remove_Restricted_Region") {
-
-                            if (isset($_POST["old_region_restriction"]) and $_POST["old_region_restriction"] != "") {
-                                $this->addOrRemoveRestriction("Remove", "Region", $_POST["old_region_restriction"]);
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "Region Failed to Remove! No name was sent.";
-                            }
-
-                        }
-                        elseif ($_POST["Action"] == "Add_Restricted_System") {
-
-                            if (isset($_POST["new_system_restriction"]) and $_POST["new_system_restriction"] != "") {
-                                $this->addOrRemoveRestriction("Add", "System", $_POST["new_system_restriction"]);
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "System Failed to Add! No name was sent.";
-                            }
-
-                        }
-                        elseif ($_POST["Action"] == "Remove_Restricted_System") {
-
-                            if (isset($_POST["old_system_restriction"]) and $_POST["old_system_restriction"] != "") {
-                                $this->addOrRemoveRestriction("Remove", "System", $_POST["old_system_restriction"]);
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "System Failed to Remove! No name was sent.";
-                            }
-
-                        }
-                        elseif ($_POST["Action"] == "Add_Route") {
-
-                            if (
-                                isset($_POST["route_origin"]) 
-                                and $_POST["route_origin"] != "" 
-                                and isset($_POST["route_destination"]) 
-                                and $_POST["route_destination"] != "" 
-                                and isset($_POST["route_price_model"])
-                                and in_array($_POST["route_price_model"], ["Standard", "Fixed", "Range", "Gate"])
-                            ) {
-                                $this->addOrRemoveRoute(
-                                    "Add", 
-                                    $_POST["route_origin"], 
-                                    $_POST["route_destination"], 
-                                    $_POST["route_price_model"], 
-                                    ((isset($_POST["route_price"]) and $_POST["route_price"] != "") ? $_POST["route_price"] : null), 
-                                    ((isset($_POST["route_gate_price"]) and $_POST["route_gate_price"] != "") ? $_POST["route_gate_price"] : null), 
-                                    ((isset($_POST["route_premium"]) and $_POST["route_premium"] != "") ? $_POST["route_premium"] : null), 
-                                    ((isset($_POST["route_max_volume"]) and $_POST["route_max_volume"] != "") ? $_POST["route_max_volume"] : null),
-                                    ((isset($_POST["route_max_collateral"]) and $_POST["route_max_collateral"] != "") ? $_POST["route_max_collateral"] : null),
-                                    isset($_POST["route_add_inverse"])
-                                );
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "Route Failed to Add! An origin, destination, and price model must be included.";
-                            }
-
-                        }
-                        elseif ($_POST["Action"] == "Remove_Route") {
-
-                            if (isset($_POST["old_route_origin"]) and $_POST["old_route_origin"] != "" and isset($_POST["old_route_destination"]) and $_POST["old_route_destination"] != "") {
-                                $this->addOrRemoveRoute(
-                                    "Remove", 
-                                    $_POST["old_route_origin"], 
-                                    $_POST["old_route_destination"]
-                                );
-                            }
-                            else {
-                                header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                                $this->errors[] = "Route Failed to Remove! An origin and destination combination was not sent.";
-                            }
-
+        
                         }
                         else {
-
+            
                             header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                            throw new \Exception("No valid combination of action and required secondary arguments was received.", 10002);
-        
+                            throw new \Exception("Request is missing the action argument.", 10001);
+            
                         }
-    
+
                     }
                     else {
-        
-                        header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
-                        throw new \Exception("Request is missing the action argument.", 10001);
-        
+                        header($_SERVER["SERVER_PROTOCOL"] . " 403 Forbidden");
+                        $this->errors[] = "CSRF Token Mismatch! Reload to the page to make further changes.";
                     }
 
                 }
@@ -330,6 +341,16 @@
                 $optionUpdate->bindParam(":highcollateralpenalty", $_POST["highCollateralPenalty"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":highcollateralblockaderunnerpenalty", $_POST["highCollateralBlockadeRunnerPenalty"], \PDO::PARAM_INT);
                 $optionUpdate->execute();
+
+                $newValues = $_POST;
+                unset($newValues["csrf_token"]);
+                unset($newValues["Action"]);
+
+                $this->logger->make_log_entry(
+                    logType: "Options Updated",
+                    logDetails: print_r($newValues, true)
+                );
+
             }
             catch (\Exception $error) {
                 header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -347,6 +368,11 @@
                     $tierAddition->bindParam(":threshold", $threshold);
                     $tierAddition->bindParam(":price", $price, \PDO::PARAM_INT);
                     $tierAddition->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Tier Added",
+                        logDetails: "Threshold: $threshold LY \nPrice: $price ISK"
+                    );
                 }
                 catch (\Exception $error) {
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -360,6 +386,11 @@
                     $tierRemoval = $this->databaseConnection->prepare("DELETE FROM tiers WHERE threshold = :threshold");
                     $tierRemoval->bindParam(":threshold", $threshold);
                     $tierRemoval->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Tier Removed",
+                        logDetails: "Threshold: $threshold LY"
+                    );
                 }
                 catch (\Exception $error) {
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -386,6 +417,11 @@
                     $restrictionAddition->bindParam(":id", $id);
                     $restrictionAddition->bindParam(":type", $type);
                     $restrictionAddition->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Restriction Added",
+                        logDetails: "ID: $id \nType: $type \nName: $name"
+                    );
                 }
                 catch (\Exception $error) {
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -399,6 +435,11 @@
                     $restrictionRemoval = $this->databaseConnection->prepare("DELETE FROM restrictedlocations WHERE id = :id");
                     $restrictionRemoval->bindParam(":id", $id);
                     $restrictionRemoval->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Restriction Removed",
+                        logDetails: "ID: $id \nType: $type \nName: $name"
+                    );
                 }
                 catch (\Exception $error) {
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -474,6 +515,11 @@
                     $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
                     $restrictionAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
                     $restrictionAddition->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Route Added",
+                        logDetails: "Origin: $origin \nDestination: $destination"
+                    );
                 }
                 catch (\Exception $error) {
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -513,6 +559,11 @@
                         $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
                         $restrictionAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
                         $restrictionAddition->execute();
+
+                        $this->logger->make_log_entry(
+                            logType: "Route Added",
+                            logDetails: "Origin: $destination \nDestination: $origin"
+                        );
                     }
                     catch (\Exception $error) {
                         header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -529,6 +580,11 @@
                     $restrictionRemoval->bindParam(":start", $originID);
                     $restrictionRemoval->bindParam(":end", $destinationID);
                     $restrictionRemoval->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Route Removed",
+                        logDetails: "Origin: $origin \nDestination: $destination"
+                    );
                 }
                 catch (\Exception $error) {
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");

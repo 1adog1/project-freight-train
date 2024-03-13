@@ -60,6 +60,7 @@
                         <span class="input-group-text">LY</span>
                         <input type="text" name="tier_price" id="tier_price" class="form-control" placeholder="Price">
                         <span class="input-group-text">ISK/m³</span>
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                         <button type="submit" name="Action" value="Add_Tier" class="btn btn-primary">+</button>
                     </form>
 
@@ -75,6 +76,7 @@
                             </ul>
                             <form method="post" action="/manager/" class="input-group mt-3 mb-3">
                                 <input type="text" name="new_region_restriction" id="new_region_restriction" class="form-control" placeholder="Region Name">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                                 <button type="submit" name="Action" value="Add_Restricted_Region" class="btn btn-primary">+</button>
                             </form>
 
@@ -90,6 +92,7 @@
                             </ul>
                             <form method="post" action="/manager/" class="input-group mt-3 mb-3">
                                 <input type="text" name="new_system_restriction" id="new_system_restriction" class="form-control" placeholder="System Name">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                                 <button type="submit" name="Action" value="Add_Restricted_System" class="btn btn-primary">+</button>
                             </form>
 
@@ -283,6 +286,7 @@
                         <span class="input-group-text">×</span>
                     </div>
 
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                     <button type="submit" name="Action" value="Update_Settings" class="btn btn-primary w-100 mt-4">Update Settings</button>
 
                 </div>
@@ -322,6 +326,7 @@
                         <div class="col-xl-2 d-flex justify-content-end pe-1">
                             <form method="post" action="/manager/">
                                 <input type="hidden" name="old_tier_range" value="<?php echo htmlspecialchars($eachTier["threshold"]); ?>"> 
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                                 <button type="submit" name="Action" value="Remove_Tier" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                             </form>
                         </div>
@@ -346,6 +351,7 @@
                         <div class="col-xl-3 d-flex justify-content-end pe-1">
                             <form method="post" action="/manager/">
                                 <input type="hidden" name="old_region_restriction" value="<?php echo htmlspecialchars($eachRestriction); ?>"> 
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                                 <button type="submit" name="Action" value="Remove_Restricted_Region" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                             </form>
                         </div>
@@ -370,6 +376,7 @@
                         <div class="col-xl-3 d-flex justify-content-end pe-1">
                             <form method="post" action="/manager/">
                                 <input type="hidden" name="old_system_restriction" value="<?php echo htmlspecialchars($eachRestriction); ?>"> 
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                                 <button type="submit" name="Action" value="Remove_Restricted_System" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                             </form>
                         </div>
@@ -401,6 +408,7 @@
                     <form method="post" action="/manager/">
                         <input type="hidden" name="old_route_origin" value="<?php echo htmlspecialchars($eachRoute["start"]); ?>"> 
                         <input type="hidden" name="old_route_destination" value="<?php echo htmlspecialchars($eachRoute["end"]); ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                         <button type="submit" name="Action" value="Remove_Route" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                     </form>
                 </td>
@@ -509,6 +517,7 @@
                             </div>
 
                             <div class="d-grid mt-4">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                                 <button type="submit" name="Action" value="Add_Route" class="btn btn-primary w-100">Create</button>
                             </div>
 
@@ -536,12 +545,14 @@
 
         protected $model;
         protected $controller;
+        protected $csrfToken;
         
         public function __construct(
             private \Ridley\Core\Dependencies\DependencyManager $dependencies
         ) {
             $this->model = $this->dependencies->get("Model");
             $this->controller = $this->dependencies->get("Controller");
+            $this->csrfToken = $this->dependencies->get("CSRF Token");
         }
         
         public function renderContent() {

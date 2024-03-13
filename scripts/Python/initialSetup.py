@@ -45,6 +45,8 @@ else:
     except:
 
         raise Warning("No Configuration File or Required Environment Variables Found!")
+    
+databaseInfo["DatabaseServer"] = databaseInfo["DatabaseServer"].replace("'", "").replace('"', "")
 
 def getTimeMark():
 

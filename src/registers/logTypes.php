@@ -23,4 +23,16 @@
             
     */
 
+    $siteLogger->register(
+        "route_management", 
+        "Route Management", 
+        "Options Updated", 
+        "Tier Added", 
+        "Tier Removed",
+        "Restriction Added", 
+        "Restriction Removed",
+        "Route Added", 
+        "Route Removed"
+    );
+
 ?>
