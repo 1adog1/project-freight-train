@@ -249,12 +249,18 @@
         }
         
         private function grantAccess($pageData) {
+
+            $lastPage = $this->getLastPage();
             
-            if ($this->getLastPage() !== $pageData["Name"]) {
+            if ($lastPage !== $pageData["Name"]) {
                 
                 $this->updateLastPage($pageData["Name"]);
+
+                if ($lastPage !== false or $pageData["Name"] !== "Homepage") {
                 
-                $this->pageHandlingLogger->make_log_entry("Access Granted", $pageData["Name"], $this->userName, ("Login Status (Required / Provided): " . ($pageData["Login Required"] ? "True" : "False") . " / " . ($this->isLoggedIn ? "True" : "False") . "\nRoles (Required / Provided): (" . implode(", ", $pageData["Access Roles"]) . ") / (" . implode(", ", $this->userAccessRoles) . ")"));
+                    $this->pageHandlingLogger->make_log_entry("Access Granted", $pageData["Name"], $this->userName, ("Login Status (Required / Provided): " . ($pageData["Login Required"] ? "True" : "False") . " / " . ($this->isLoggedIn ? "True" : "False") . "\nRoles (Required / Provided): (" . implode(", ", $pageData["Access Roles"]) . ") / (" . implode(", ", $this->userAccessRoles) . ")"));
+                
+                }
                 
             }
             
