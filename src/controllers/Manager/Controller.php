@@ -239,7 +239,7 @@
                     }
                     else {
                         header($_SERVER["SERVER_PROTOCOL"] . " 403 Forbidden");
-                        $this->errors[] = "CSRF Token Mismatch! Reload to the page to make further changes.";
+                        $this->errors[] = "CSRF Token Mismatch! Reload the page to make further changes.";
                     }
 
                 }
