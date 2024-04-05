@@ -2,7 +2,7 @@
 
 Project Freight Train is a configurable rate calculator for freight services in Eve Online. It features a suite of configuration options, including standard routes, rush hauling, both broad and specific routing restrictions, custom volume and collateral limitations in a variety of scopes, and different pricing schemes for Jump Drive, Gate, Wormhole, and Pochven based hauling methods. 
 
-**Current Version: Pickup – 0 – 0**
+**Current Version: Pickup – 0 – 1**
 
 ## Requirements
 

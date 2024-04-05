@@ -1,14 +1,9 @@
-# Minor Version Update Clay-1-0
-
-## Errors and Exceptions
-- Converted `trigger_error`s to `throw`s across the app.
-- Created a custom `ESIException` for the ESI Object.
-
-## Logging
-- Removed extraneous `htmlspecialchars` when logging to DB and handling errors.
-
-## ESI Compliance
-- `/search/` endpoint replaced with authenticated `/characters/{character_id}/search/` endpoint.
+# Patch Version Update Pickup – 0 – 1
 
 ## Bugfixes
-- Removed the unused `MaxTableRows` config variable.
+- Fixed a Warning in the Calculator that occurred when an invalid system was entered.
+- Fixed a Deprecated Code Error in the page handler caused by a `null` subject being passed to `preg_split()`
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Sync up files with the repository.
