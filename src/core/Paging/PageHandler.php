@@ -154,7 +154,7 @@
             $parsedURL = parse_url($rawURL, PHP_URL_PATH);
             $parsedPath = preg_split(
                 pattern: "@/@", 
-                subject: $parsedURL, 
+                subject: ($parsedURL ?? ""), 
                 flags: PREG_SPLIT_NO_EMPTY
             );
             

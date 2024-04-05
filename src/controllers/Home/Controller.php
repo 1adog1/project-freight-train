@@ -106,6 +106,10 @@
             $originData = $this->getSystemData($origin);
             $destinationData = $this->getSystemData($destination);
 
+            if (is_null($originData) or is_null($destinationData)) {
+                return;
+            }
+
             if (!$this->allowHighsecToHighsec and $originData["class"] == "Highsec" and $destinationData["class"] == "Highsec") {
 
                 header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -475,14 +479,14 @@
                 else {
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
                     $this->errors[] = "The System $name Was Not Found! It either does not exist, or is not approved for use.";
-                    return null;
+                    return;
                 }
 
             }
             catch (\Exception $error) {
                 header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
                 $this->errors[] = "The System $name Was Not Found! " . $error->getMessage();
-                return null;
+                return;
             }
 
         }
