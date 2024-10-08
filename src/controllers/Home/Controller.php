@@ -28,6 +28,7 @@
         private $gatePrice;
         private $wormholePrice;
         private $pochvenPrice;
+        private $minimumPrice;
         //Volume Controls
         public $maxVolume;
         public $blockadeRunnerCutoff;
@@ -124,10 +125,12 @@
                     "SELECT 
                         basepriceoverride, 
                         gatepriceoverride, 
+                        minimumpriceoverride,
                         pricemodel, 
                         collateralpremiumoverride, 
                         maxvolumeoverride, 
-                        maxcollateraloverride 
+                        maxcollateraloverride, 
+                        disablehighcollateral
                     FROM routes 
                     WHERE start = :start AND end = :end"
                 );
@@ -353,14 +356,22 @@
 
         private function adjustForSpecialMultipliers($adjustedPrice, $rush, $routeData) {
 
+            $minimumPriceToUse = $routeData["minimumpriceoverride"] ?? $this->minimumPrice;
+
             if ($rush and $this->allowRush) {
                 $this->penalties["Rush"] = number_format($this->rushMultiplier, 4) . "×";
             }
             if ($routeData === false) {
                 $this->penalties["Non-Standard"] = number_format($this->nonstandardMultiplier, 4) . "×";
             }
+            if (($adjustedPrice * (($rush and $this->allowRush) ? $this->rushMultiplier : 1) * (($routeData === false) ? $this->nonstandardMultiplier : 1)) < $minimumPriceToUse) {
+                $this->penalties["Minimum Price"] = number_format($minimumPriceToUse) . " ISK";
+            }
 
-            return $adjustedPrice * (($rush and $this->allowRush) ? $this->rushMultiplier : 1) * (($routeData === false) ? $this->nonstandardMultiplier : 1);
+            return max(
+                $minimumPriceToUse, 
+                ($adjustedPrice * (($rush and $this->allowRush) ? $this->rushMultiplier : 1) * (($routeData === false) ? $this->nonstandardMultiplier : 1))
+            );
 
         }
 
@@ -369,7 +380,7 @@
             $percentage = $routeData["collateralpremiumoverride"] ?? $this->collateralPremium;
             $premiumMultiplier = $percentage / 100;
 
-            if ($collateral > $this->highCollateralCutoff) {
+            if ($collateral > $this->highCollateralCutoff and !boolval($routeData["disablehighcollateral"])) {
 
                 $basePremium = $this->highCollateralCutoff * $premiumMultiplier;
                 $highCollateralMagnitude = ($volume < $this->blockadeRunnerCutoff) ? $this->highCollateralBlockadeRunnerPenalty : $this->highCollateralPenalty;
@@ -519,6 +530,7 @@
                 $this->gatePrice = (int)$optionData["gateprice"];
                 $this->wormholePrice = (int)$optionData["wormholeprice"];
                 $this->pochvenPrice = (int)$optionData["pochvenprice"];
+                $this->minimumPrice = (int)$optionData["minimumprice"];
                 //Volume Controls
                 $this->maxVolume = (int)$optionData["maxvolume"];
                 $this->blockadeRunnerCutoff = (int)$optionData["blockaderunnercutoff"];

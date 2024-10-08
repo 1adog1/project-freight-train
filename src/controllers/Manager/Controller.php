@@ -29,6 +29,7 @@
         public $gatePrice;
         public $wormholePrice;
         public $pochvenPrice;
+        public $minimumPrice;
         //Volume Controls
         public $maxVolume;
         public $blockadeRunnerCutoff;
@@ -88,6 +89,7 @@
                                     "nonstandardMultiplier", 
                                     "wormholePrice", 
                                     "pochvenPrice", 
+                                    "minimumPrice",
                                     "collateralPremium",
                                     "highCollateralCutoff",
                                     "highCollateralPenalty",
@@ -194,9 +196,11 @@
                                         $_POST["route_price_model"], 
                                         ((isset($_POST["route_price"]) and $_POST["route_price"] != "") ? $_POST["route_price"] : null), 
                                         ((isset($_POST["route_gate_price"]) and $_POST["route_gate_price"] != "") ? $_POST["route_gate_price"] : null), 
+                                        ((isset($_POST["route_minimum_price"]) and $_POST["route_minimum_price"] != "") ? $_POST["route_minimum_price"] : null), 
                                         ((isset($_POST["route_premium"]) and $_POST["route_premium"] != "") ? $_POST["route_premium"] : null), 
                                         ((isset($_POST["route_max_volume"]) and $_POST["route_max_volume"] != "") ? $_POST["route_max_volume"] : null),
                                         ((isset($_POST["route_max_collateral"]) and $_POST["route_max_collateral"] != "") ? $_POST["route_max_collateral"] : null),
+                                        isset($_POST["route_disable_high_collateral"]),
                                         isset($_POST["route_add_inverse"])
                                     );
                                 }
@@ -277,6 +281,7 @@
                         wormholeprice, 
                         maxpochvenvolume, 
                         pochvenprice, 
+                        minimumprice,
                         collateralpremium,
                         highcollateralcutoff,
                         highcollateralpenalty,
@@ -306,6 +311,7 @@
                         :wormholeprice, 
                         :maxpochvenvolume, 
                         :pochvenprice, 
+                        :minimumprice,
                         :collateralpremium,
                         :highcollateralcutoff,
                         :highcollateralpenalty,
@@ -336,6 +342,7 @@
                 $optionUpdate->bindParam(":wormholeprice", $_POST["wormholePrice"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":maxpochvenvolume", $_POST["maxPochvenVolume"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":pochvenprice", $_POST["pochvenPrice"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":minimumprice", $_POST["minimumPrice"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":collateralpremium", $_POST["collateralPremium"]);
                 $optionUpdate->bindParam(":highcollateralcutoff", $_POST["highCollateralCutoff"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":highcollateralpenalty", $_POST["highCollateralPenalty"], \PDO::PARAM_INT);
@@ -462,9 +469,11 @@
             $priceModel = null, 
             $priceOverride = null, 
             $gatePriceOverride = null, 
+            $minimumPriceOverride = null, 
             $collateralOverride = null, 
             $maxVolumeOverride = null, 
             $maxCollateralOverride = null,
+            $disableHighCollateral = false,
             $addInverse = false
         ) {
 
@@ -476,6 +485,7 @@
                 if (
                     !(is_null($priceOverride) or is_numeric($priceOverride))
                     or !(is_null($gatePriceOverride) or is_numeric($gatePriceOverride))
+                    or !(is_null($minimumPriceOverride) or is_numeric($minimumPriceOverride))
                     or !(is_null($collateralOverride) or is_numeric($collateralOverride))
                     or !(is_null($maxVolumeOverride) or is_numeric($maxVolumeOverride))
                     or !(is_null($maxCollateralOverride) or is_numeric($maxCollateralOverride))
@@ -491,29 +501,35 @@
                             end, 
                             basepriceoverride, 
                             gatepriceoverride, 
+                            minimumpriceoverride,
                             pricemodel, 
                             collateralpremiumoverride, 
                             maxvolumeoverride, 
-                            maxcollateraloverride
+                            maxcollateraloverride,
+                            disablehighcollateral
                         ) VALUES (
                             :start, 
                             :end, 
                             :basepriceoverride, 
                             :gatepriceoverride, 
+                            :minimumpriceoverride,
                             :pricemodel, 
                             :collateralpremiumoverride, 
                             :maxvolumeoverride, 
-                            :maxcollateraloverride
+                            :maxcollateraloverride,
+                            :disablehighcollateral
                         )"
                     );
                     $restrictionAddition->bindParam(":start", $originID);
                     $restrictionAddition->bindParam(":end", $destinationID);
                     $restrictionAddition->bindParam(":basepriceoverride", $priceOverride);
                     $restrictionAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
+                    $restrictionAddition->bindParam(":minimumpriceoverride", $minimumPriceOverride);
                     $restrictionAddition->bindParam(":pricemodel", $priceModel);
                     $restrictionAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
                     $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
                     $restrictionAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
+                    $restrictionAddition->bindValue(":disablehighcollateral", (int)$disableHighCollateral, \PDO::PARAM_INT);
                     $restrictionAddition->execute();
 
                     $this->logger->make_log_entry(
@@ -535,29 +551,35 @@
                                 end, 
                                 basepriceoverride, 
                                 gatepriceoverride, 
+                                minimumpriceoverride,
                                 pricemodel, 
                                 collateralpremiumoverride, 
                                 maxvolumeoverride, 
-                                maxcollateraloverride
+                                maxcollateraloverride,
+                                disablehighcollateral
                             ) VALUES (
                                 :start, 
                                 :end, 
                                 :basepriceoverride, 
                                 :gatepriceoverride, 
+                                :minimumpriceoverride,
                                 :pricemodel, 
                                 :collateralpremiumoverride, 
                                 :maxvolumeoverride, 
-                                :maxcollateraloverride
+                                :maxcollateraloverride,
+                                :disablehighcollateral
                             )"
                         );
                         $restrictionAddition->bindParam(":start", $destinationID);
                         $restrictionAddition->bindParam(":end", $originID);
                         $restrictionAddition->bindParam(":basepriceoverride", $priceOverride);
                         $restrictionAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
+                        $restrictionAddition->bindParam(":minimumpriceoverride", $minimumPriceOverride);
                         $restrictionAddition->bindParam(":pricemodel", $priceModel);
                         $restrictionAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
                         $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
                         $restrictionAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
+                        $restrictionAddition->bindValue(":disablehighcollateral", (int)$disableHighCollateral, \PDO::PARAM_INT);
                         $restrictionAddition->execute();
 
                         $this->logger->make_log_entry(
@@ -690,6 +712,7 @@
                 $this->gatePrice = $optionData["gateprice"];
                 $this->wormholePrice = $optionData["wormholeprice"];
                 $this->pochvenPrice = $optionData["pochvenprice"];
+                $this->minimumPrice = $optionData["minimumprice"];
                 //Volume Controls
                 $this->maxVolume = $optionData["maxvolume"];
                 $this->blockadeRunnerCutoff = $optionData["blockaderunnercutoff"];

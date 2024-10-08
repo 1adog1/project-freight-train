@@ -75,9 +75,11 @@
                     routes.pricemodel AS model, 
                     routes.basepriceoverride AS price, 
                     routes.gatepriceoverride AS gateprice,
+                    routes.minimumpriceoverride AS minimumprice,
                     routes.collateralpremiumoverride AS premium, 
                     routes.maxvolumeoverride AS maxvolume, 
-                    routes.maxcollateraloverride AS maxcollateral
+                    routes.maxcollateraloverride AS maxcollateral,
+                    routes.disablehighcollateral AS disablehighcollateral
                 FROM routes 
                 INNER JOIN  evesystems AS startsystem ON routes.start = startsystem.id 
                 INNER JOIN evesystems AS endsystem ON routes.end = endsystem.id

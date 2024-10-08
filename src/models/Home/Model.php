@@ -40,9 +40,11 @@
                     routes.pricemodel AS model,
                     routes.basepriceoverride AS baseprice,
                     routes.gatepriceoverride AS gateprice,
+                    routes.minimumpriceoverride AS minimumprice,
                     routes.collateralpremiumoverride AS premium,
                     routes.maxvolumeoverride AS maxvolume,
-                    routes.maxcollateraloverride AS maxcollateral
+                    routes.maxcollateraloverride AS maxcollateral,
+                    routes.disablehighcollateral AS disablehighcollateral
                 FROM routes 
                 INNER JOIN evesystems AS startsystem ON routes.start = startsystem.id 
                 INNER JOIN evesystems AS endsystem ON routes.end = endsystem.id
@@ -65,6 +67,9 @@
                 if (isset($eachRoute["gateprice"])) {
                     $thisRoute["Overrides"][] = htmlspecialchars("Gate Price: " . number_format((int)$eachRoute["gateprice"]) . " ISK/Jump/m³");
                 }
+                if (isset($eachRoute["minimumprice"])) {
+                    $thisRoute["Overrides"][] = htmlspecialchars("Minimum Price: " . number_format((int)$eachRoute["minimumprice"]) . " ISK");
+                }
                 if (isset($eachRoute["premium"])) {
                     $thisRoute["Overrides"][] = htmlspecialchars("Collateral Premium: " . $eachRoute["premium"] . " %");
                 }
@@ -73,6 +78,9 @@
                 }
                 if (isset($eachRoute["maxcollateral"])) {
                     $thisRoute["Overrides"][] = htmlspecialchars("Max Collateral: " . number_format((int)$eachRoute["maxcollateral"]) . " ISK");
+                }
+                if (boolval($eachRoute["disablehighcollateral"])) {
+                    $thisRoute["Overrides"][] = htmlspecialchars("High Collateral Premium Disabled");
                 }
 
                 $this->routes[] = $thisRoute;

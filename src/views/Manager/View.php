@@ -31,7 +31,7 @@
                                 <th scope="col" style="width: 15%;">Start</th>
                                 <th scope="col" style="width: 15%;">End</th>
                                 <th scope="col" style="width: 10%;">Model</th>
-                                <th scope="col" style="width: 15%;">Price / Gate Price</th>
+                                <th scope="col" style="width: 15%;">Price<br>(Gate Price)<br>[Minimum Price]</th>
                                 <th scope="col" style="width: 10%;">Premium</th>
                                 <th scope="col" style="width: 12.5%;">Max Volume</th>
                                 <th scope="col" style="width: 15%;">Max Collateral</th>
@@ -164,6 +164,12 @@
                     <div class="input-group">
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->pochvenPrice); ?>" name="pochvenPrice" id="pochvenPrice" required>
                         <span class="input-group-text">ISK/m³</span>
+                    </div>
+
+                    <label for="minimumPrice" class="form-label mt-3">Minimum Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->minimumPrice); ?>" name="minimumPrice" id="minimumPrice" required>
+                        <span class="input-group-text">ISK</span>
                     </div>
 
                 </div>
@@ -399,9 +405,13 @@
                 <td><?php echo htmlspecialchars($eachRoute["model"]); ?></td>
                 <td>
                     <?php echo isset($eachRoute["price"]) ? htmlspecialchars(number_format($eachRoute["price"])) . " ISK" : ""; ?>
-                    <?php echo isset($eachRoute["gateprice"]) ? " / " . htmlspecialchars(number_format($eachRoute["gateprice"])) . " ISK" : ""; ?>
+                    <?php echo isset($eachRoute["gateprice"]) ? "<br>(" . htmlspecialchars(number_format($eachRoute["gateprice"])) . " ISK)" : ""; ?>
+                    <?php echo isset($eachRoute["minimumprice"]) ? "<br>[" . htmlspecialchars(number_format($eachRoute["minimumprice"])) . " ISK]" : ""; ?>
                 </td>
-                <td><?php echo isset($eachRoute["premium"]) ? htmlspecialchars($eachRoute["premium"]) . " %" : ""; ?></td>
+                <td>
+                    <?php echo isset($eachRoute["premium"]) ? htmlspecialchars($eachRoute["premium"]) . " %" : ""; ?>
+                    <?php echo isset($eachRoute["disablehighcollateral"]) ? "<br>Penalty Disabled" : ""; ?>
+                </td>
                 <td><?php echo isset($eachRoute["maxvolume"]) ? htmlspecialchars(number_format($eachRoute["maxvolume"])) . " m³" : ""; ?></td>
                 <td><?php echo isset($eachRoute["maxcollateral"]) ? htmlspecialchars(number_format($eachRoute["maxcollateral"])) . " ISK" : ""; ?></td>
                 <td class="text-end">
@@ -494,6 +504,12 @@
                                         <span class="input-group-text">ISK/Jump/m³</span>
                                     </div>
 
+                                    <label for="route_minimum_price" class="form-label h5 mt-3">Minimum Price Override</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="route_minimum_price" id="route_minimum_price">
+                                        <span class="input-group-text">ISK</span>
+                                    </div>
+
                                     <label for="route_premium" class="form-label h5 mt-3">Collateral Premium Override</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="route_premium" id="route_premium">
@@ -510,6 +526,11 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="route_max_collateral" id="route_max_collateral">
                                         <span class="input-group-text">ISK</span>
+                                    </div>
+
+                                    <div class="form-check form-switch mt-3">
+                                        <input class="form-check-input" type="checkbox" role="switch" name="route_disable_high_collateral" id="route_disable_high_collateral" value="true">
+                                        <label class="form-check-label" for="route_disable_high_collateral">Disable High Collateral Penalty</label>
                                     </div>
 
                                 </div>
