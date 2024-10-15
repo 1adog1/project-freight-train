@@ -410,7 +410,7 @@
                 </td>
                 <td>
                     <?php echo isset($eachRoute["premium"]) ? htmlspecialchars($eachRoute["premium"]) . " %" : ""; ?>
-                    <?php echo isset($eachRoute["disablehighcollateral"]) ? "<br>Penalty Disabled" : ""; ?>
+                    <?php echo boolval($eachRoute["disablehighcollateral"]) ? "<br>Penalty Disabled" : ""; ?>
                 </td>
                 <td><?php echo isset($eachRoute["maxvolume"]) ? htmlspecialchars(number_format($eachRoute["maxvolume"])) . " m³" : ""; ?></td>
                 <td><?php echo isset($eachRoute["maxcollateral"]) ? htmlspecialchars(number_format($eachRoute["maxcollateral"])) . " ISK" : ""; ?></td>

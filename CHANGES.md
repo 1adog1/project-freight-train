@@ -9,9 +9,10 @@
 
 1. Pause operation of the webserver.
 2. Execute the following SQL Commands:
-> ALTER TABLE options ADD minimumprice BIGINT;
-> ALTER TABLE routes ADD minimumpriceoverride BIGINT;
-> ALTER TABLE routes ADD disablehighcollateral TINYINT;
+    - > ALTER TABLE options ADD minimumprice BIGINT;
+    - > ALTER TABLE routes ADD minimumpriceoverride BIGINT;
+    - > ALTER TABLE routes ADD disablehighcollateral TINYINT;
+    - > UPDATE routes SET disablehighcollateral=0 WHERE disablehighcollateral IS NULL;
 3. Sync up files with the repository.
 4. Restart operation of the webserver.
 
