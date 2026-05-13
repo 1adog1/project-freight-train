@@ -321,7 +321,7 @@
                         $eachContract->startSystem, 
                         $eachContract->endSystem, 
                         (int)$eachContract->collateral, 
-                        (int)$eachContract->volume
+                        (int)round($eachContract->volume)
                     );
                     $eachContract->build_issues_and_standing();
 

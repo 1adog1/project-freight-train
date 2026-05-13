@@ -1,3 +1,12 @@
+# Patch Version Update Truck – 1 – 1
+
+## Bugfixes
+- Volumes are now rounded when used to generate quotes. The truncating behavior of a direct cast to integer previously produced unintuitive results.
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Sync up files with the repository.
+
 # Minor Version Update Truck – 1 – 0
 
 ## Features

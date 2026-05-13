@@ -73,7 +73,7 @@
                             $_POST["origin"], 
                             $_POST["destination"], 
                             (int)$_POST["collateral"], 
-                            (int)$_POST["volume"],
+                            (int)round($_POST["volume"]),
                             isset($_POST["rush"])
                         );
 
