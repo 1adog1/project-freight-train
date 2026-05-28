@@ -9,7 +9,7 @@
             if (isset($this->controller->sourceCharacterID)) {
                 ?>
 
-                    <h3 class="text-light" id="contract-list-header">Outstanding Contracts</h3>
+                    <h3 class="text-light" id="contracts-outstanding-header">Outstanding Contracts</h3>
                 
                     <table class="table table-dark align-middle text-start text-wrap small mt-3">
                         <thead class="p-4">
@@ -50,7 +50,7 @@
                         </tbody>
                     </table>
 
-                    <h3 class="text-light mt-4" id="contract-list-header">In-Progress Contracts</h3>
+                    <h3 class="text-light mt-4" id="contracts-in-progress-header">In-Progress Contracts</h3>
                 
                     <table class="table table-dark align-middle text-start text-wrap small mt-3">
                         <thead class="p-4">
@@ -92,6 +92,16 @@
 
                         </tbody>
                     </table>
+
+                    <h3 class="text-light mt-4" id="contractors-header">Contractors</h3>
+
+                    <div class="mt-3">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-4 g-4">
+
+                            <?php $this->contractorLister(); ?>
+                            
+                        </div>
+                    </div>
                 
                 <?php
             }
@@ -183,6 +193,39 @@
                 }
 
             }
+        }
+
+        protected function contractorLister() {
+
+            foreach ($this->model->contractorData as $eachContractorID => $eachContractor) {
+                ?>
+                <div class="col">
+                    <div class="card text-white bg-dark">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img src="https://images.evetech.net/characters/<?php echo htmlspecialchars($eachContractorID); ?>/portrait?size=128" class="img-fluid rounded mx-auto d-block">
+                                </div>
+                                <div class="col-md-9">
+                                    <h5 class="card-title"><?php echo htmlspecialchars($eachContractor["Character Name"]); ?></h5>
+                                    <h6 class="card-subtitle text-muted">
+                                        <?php echo htmlspecialchars(" (" . $eachContractor["Corporation Name"] . ")"); ?>
+                                        <?php echo isset($eachContractor["Alliance Name"]) ? htmlspecialchars(" [" . $eachContractor["Alliance Name"] . "]") : ""; ?>
+                                    </h6>
+                                    <div class="d-flex flex-row">
+                                        <div class="flex-fill mt-2 mb-2 p-1 badge bg-secondary">Last Day: <?php echo htmlspecialchars(number_format($eachContractor["Day"])); ?></div>
+                                        <div class="flex-fill ms-1 mt-2 mb-2 p-1 badge bg-secondary">Last Week: <?php echo htmlspecialchars(number_format($eachContractor["Week"])); ?></div>
+                                        <div class="flex-fill ms-1 mt-2 mb-2 p-1 badge bg-secondary">Last Month: <?php echo htmlspecialchars(number_format($eachContractor["Month"])); ?></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php
+            }
+
         }
         
         protected function metaTemplate() {

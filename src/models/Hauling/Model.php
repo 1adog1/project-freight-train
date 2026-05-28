@@ -9,6 +9,7 @@
         private $userAuthorization;
         
         public $contractData = [];
+        public $contractorData = [];
 
         public function __construct(
             private \Ridley\Core\Dependencies\DependencyManager $dependencies
@@ -54,11 +55,44 @@
                     retries: 1
                 );
 
+                 $referenceTime = time();
+
                 if ($contractsRequest["Success"]) {
 
                     $maxPage = $contractsRequest["Headers"]["X-Pages"];
 
                     foreach ($contractsRequest["Data"] as $eachContract) {
+
+                        if ($eachContract["type"] == "courier" and $eachContract["status"] == "finished") {
+
+                            if (isset($eachContract["acceptor_id"])) {
+
+                                if (!in_array($eachContract["acceptor_id"], $charactersToCheck)) {
+                                    $charactersToCheck[] = $eachContract["acceptor_id"];
+                                }
+                                if (!isset($this->contractorData[$eachContract["acceptor_id"]])) {
+                                    $this->contractorData[$eachContract["acceptor_id"]] = [
+                                        "Day" => 0,
+                                        "Week" => 0,
+                                        "Month" => 0
+                                    ];
+                                }
+
+                                $contractTime = strtotime($eachContract["date_completed"]);
+
+                                if (($referenceTime - $contractTime) <= 86400) {
+                                    $this->contractorData[$eachContract["acceptor_id"]]["Day"]++;
+                                }
+                                if (($referenceTime - $contractTime) <= (86400 * 7)) {
+                                    $this->contractorData[$eachContract["acceptor_id"]]["Week"]++;
+                                }
+                                if (($referenceTime - $contractTime) <= (86400 * 30)) {
+                                    $this->contractorData[$eachContract["acceptor_id"]]["Month"]++;
+                                }
+
+                            }
+
+                        }
 
                         if ($eachContract["type"] == "courier" and in_array($eachContract["status"], ["outstanding", "in_progress"])) {
 
@@ -306,6 +340,18 @@
                 }
 
             }
+
+            //
+            // Populating Contractor Data
+            //
+
+            foreach ($this->contractorData as $eachID => &$eachContractorData) {
+                $eachContractorData = array_merge($characterData[$eachID], $eachContractorData);
+            }
+
+            uasort($this->contractorData, function ($a, $b) {
+                return $b["Month"] <=> $a["Month"];
+            });
 
         }
 

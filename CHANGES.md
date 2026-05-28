@@ -1,3 +1,15 @@
+# Minor Version Update Truck – 2 – 0
+
+## Features
+- Added a contractor leaderboard to the Hauling Dashboard.
+
+## Bugfixes
+- Fixed some duplicate element IDs.
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Sync up files with the repository.
+
 # Patch Version Update Truck – 1 – 1
 
 ## Bugfixes
