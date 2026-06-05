@@ -273,7 +273,7 @@ for eachSystem in systems:
 
 print("[{timestamp}] - Exporting Data...".format(timestamp=time.strftime("%B %d, %Y - %H:%M:%S %z")))
 
-with open("Static/geographicInformationV5.json", "w") as outputFile:
+with open("Static/geographicInformationV6.json", "w") as outputFile:
     json.dump(systems, outputFile, indent=1)
 
 print("[{timestamp}] - Done!".format(timestamp=time.strftime("%B %d, %Y - %H:%M:%S %z")))

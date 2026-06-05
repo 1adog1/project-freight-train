@@ -1,4 +1,16 @@
-# Minor Version Update Truck – 3 – 0
+# Patch Version Update Truck - 3 - 1
+
+## Static Data
+- Updated geography for the Security Status Changes.
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Pause operation of the webserver.
+2. Sync up files with the repository.
+3. Run `initialSetup.py`.
+4. Restart operation of the webserver.
+
+# Minor Version Update Truck - 3 - 0
 
 ## Framework
 - Updated to Project Overhaul version Brick - 0 - 0

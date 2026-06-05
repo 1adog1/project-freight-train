@@ -5,7 +5,7 @@
 app_name = Project-Freight-Train
 major_version = Truck
 minor_version = 3
-patch_version = 0
+patch_version = 1
 delimiter = " - "
 github_link = https://github.com/1adog1/project-freight-train
 
