@@ -5,6 +5,7 @@
     class Controller implements \Ridley\Interfaces\Controller {
 
         private $databaseConnection;
+        private $versionVariables;
         private $userAuthorization;
         public $errors = [];
 
@@ -46,6 +47,7 @@
         ) {
 
             $this->databaseConnection = $this->dependencies->get("Database");
+            $this->versionVariables = $this->dependencies->get("Version Variables");
             $this->userAuthorization = $this->dependencies->get("Authorization Control");
             
             if ($this->loadOptions()) {
@@ -106,7 +108,8 @@
             if ($sourceCharacter !== false) {
 
                 $esiHandler = new \Ridley\Objects\ESI\Handler(
-                    $this->databaseConnection
+                    $this->databaseConnection,
+                    $this->versionVariables
                 );
 
                 $affiliationsCall = $esiHandler->call(endpoint: "/characters/affiliation/", characters: [$sourceCharacter], retries: 1);
@@ -135,6 +138,7 @@
 
             $esiHandler = new \Ridley\Objects\ESI\Handler(
                 $this->databaseConnection,
+                $this->versionVariables,
                 $this->userAuthorization->getAccessToken("Source", $this->sourceCharacterID)
             );
 

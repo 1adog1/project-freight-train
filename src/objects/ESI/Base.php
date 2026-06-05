@@ -7,7 +7,7 @@
     class Base {
 
         private $defaultSuccessCodes = ["200", "204"];
-        private $defaultCompatibilityDate = "2026-01-05";
+        private $defaultCompatibilityDate = "2026-06-01";
 
         private function hashRequest(string $url, string $method, ?array $payload, ?string $accessToken) {
 
@@ -106,7 +106,8 @@
                     "ignore_errors" => true,
                     "header" => [
                         "accept: application/json",
-                        "X-Compatibility-Date: " . $compatibilityDateHeader
+                        "X-Compatibility-Date: " . $compatibilityDateHeader,
+                        "X-User-Agent: " . $this->userAgent
                     ],
                     "method" => $method
                 ]

@@ -6,6 +6,7 @@
         
         private $controller;
         private $databaseConnection;
+        private $versionVariables;
         private $userAuthorization;
         
         public $contractData = [];
@@ -17,6 +18,7 @@
             
             $this->controller = $this->dependencies->get("Controller");
             $this->databaseConnection = $this->dependencies->get("Database");
+            $this->versionVariables = $this->dependencies->get("Version Variables");
             $this->userAuthorization = $this->dependencies->get("Authorization Control");
 
             if (isset($this->controller->sourceCharacterID)) {
@@ -37,6 +39,7 @@
 
             $esiHandler = new \Ridley\Objects\ESI\Handler(
                 $this->databaseConnection,
+                $this->versionVariables,
                 $this->userAuthorization->getAccessToken("Source", $this->controller->sourceCharacterID)
             );
 

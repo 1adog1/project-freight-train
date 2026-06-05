@@ -6,6 +6,7 @@
 
         private $availableRoles = [];
         private $databaseConnection;
+        private $versionVariables;
         private $logger;
         private $configVariables;
         private $characterStats;
@@ -17,6 +18,7 @@
         ) {
 
             $this->databaseConnection = $this->dependencies->get("Database");
+            $this->versionVariables = $this->dependencies->get("Version Variables");
             $this->logger = $this->dependencies->get("Logging");
             $this->configVariables = $this->dependencies->get("Configuration Variables");
             $this->characterStats = $this->dependencies->get("Character Stats");
@@ -24,6 +26,7 @@
 
             $this->esiHandler = new \Ridley\Objects\ESI\Handler(
                 $this->databaseConnection,
+                $this->versionVariables,
                 $this->userAuthorization->getAccessToken("Default", $this->characterStats["Character ID"])
             );
 

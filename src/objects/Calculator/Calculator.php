@@ -5,6 +5,7 @@
     class Calculator {
 
         private $databaseConnection;
+        private $versionVariables;
         private $esiHandler;
         private $optionsLoaded = false;
 
@@ -53,7 +54,8 @@
         ) {
 
             $this->databaseConnection = $this->dependencies->get("Database");
-            $this->esiHandler =  new \Ridley\Objects\ESI\Handler($this->databaseConnection);
+            $this->versionVariables = $this->dependencies->get("Version Variables");
+            $this->esiHandler =  new \Ridley\Objects\ESI\Handler($this->databaseConnection, $this->versionVariables);
 
             $this->loadOptions();
 

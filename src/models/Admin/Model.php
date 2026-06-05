@@ -5,6 +5,7 @@
     class Model implements \Ridley\Interfaces\Model {
         
         private $databaseConnection;
+        private $versionVariables;
         private $esiHandler;
         private $controller;
 
@@ -17,7 +18,8 @@
         ) {
             
             $this->databaseConnection = $this->dependencies->get("Database");
-            $this->esiHandler =  new \Ridley\Objects\ESI\Handler($this->databaseConnection);
+            $this->versionVariables = $this->dependencies->get("Version Variables");
+            $this->esiHandler =  new \Ridley\Objects\ESI\Handler($this->databaseConnection, $this->versionVariables);
             $this->controller = $this->dependencies->get("Controller");
             $this->knownGroups = $this->controller->passKnownGroups();
             $this->getSourceCharacters();

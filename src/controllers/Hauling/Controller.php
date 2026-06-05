@@ -5,6 +5,7 @@
     class Controller implements \Ridley\Interfaces\Controller {
         
         private $databaseConnection;
+        private $versionVariables;
         private $logger;
         private $configVariables;
 
@@ -16,6 +17,7 @@
         ) {
             
             $this->databaseConnection = $this->dependencies->get("Database");
+            $this->versionVariables = $this->dependencies->get("Version Variables");
 
             $this->databaseConnection = $this->dependencies->get("Database");
             $this->logger = $this->dependencies->get("Logging");
@@ -26,7 +28,8 @@
                 $auth = new \Ridley\Core\Authorization\Base\AuthBase(
                     $this->logger, 
                     $this->databaseConnection, 
-                    $this->configVariables
+                    $this->configVariables,
+                    $this->versionVariables
                 );
                 
                 $auth->login("Source", "esi-search.search_structures.v1 esi-contracts.read_corporation_contracts.v1 esi-universe.read_structures.v1");
@@ -48,7 +51,8 @@
             if ($sourceCharacter !== false) {
 
                 $esiHandler = new \Ridley\Objects\ESI\Handler(
-                    $this->databaseConnection
+                    $this->databaseConnection,
+                    $this->versionVariables
                 );
 
                 $affiliationsCall = $esiHandler->call(endpoint: "/characters/affiliation/", characters: [$sourceCharacter], retries: 1);

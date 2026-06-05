@@ -13,7 +13,7 @@
     $errorHandler = new \Ridley\Core\Errors\ErrorHandler($siteLogger);
     require __DIR__ . "/../../src/registers/errorHandlingMethods.php";
     
-    $userAuthorization = new \Ridley\Core\Authorization\Base\AuthBase($siteLogger, $masterDatabaseConnection, $configVariables);
+    $userAuthorization = new \Ridley\Core\Authorization\Base\AuthBase($siteLogger, $masterDatabaseConnection, $configVariables, $versionVariables);
     $userAuthorization->updateSourceCharacters(true);
 
 ?>

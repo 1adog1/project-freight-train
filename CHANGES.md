@@ -1,3 +1,12 @@
+# Minor Version Update Truck – 3 – 0
+
+## Framework
+- Updated to Project Overhaul version Brick - 0 - 0
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Sync up files with the repository.
+
 # Minor Version Update Truck – 2 – 0
 
 ## Features
