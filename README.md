@@ -6,12 +6,17 @@ Project Freight Train is a configurable rate calculator for freight services in 
 
 ## Requirements
 
-The core of this framework requires the following:
+This app requires the following:
 
-* Apache ≥ 2.4
-  * The `DocumentRoot` config option to set `/public`
-  * The `FallbackResource` config option set to `/index.php`
-* PHP ≥ 8.0
+* A Web Server Such As:
+  * NGINX ≥ 1.18
+    * The `root` option pointing to the `/public` folder
+    * The `index` option set to `index.php`
+    * The `try_files` option set to `$uri /index.php$is_args$args`
+  * Apache ≥ 2.4
+    * The `DocumentRoot` config option set to `/public`
+    * The `FallbackResource` config option set to `/index.php`
+* PHP ≥ 8.1
   * The `curl` Built-In Extension
   * The `pdo_mysql` Built-In Extension
   * The `openssl` Built-In Extension
