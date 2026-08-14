@@ -6,6 +6,7 @@
         
         private $databaseConnection;
         private $versionVariables;
+        private $userAuthorization;
         private $logger;
         private $configVariables;
 
@@ -18,6 +19,7 @@
             
             $this->databaseConnection = $this->dependencies->get("Database");
             $this->versionVariables = $this->dependencies->get("Version Variables");
+            $this->userAuthorization = $this->dependencies->get("Authorization Control");
 
             $this->databaseConnection = $this->dependencies->get("Database");
             $this->logger = $this->dependencies->get("Logging");
@@ -70,6 +72,13 @@
 
                     throw new \Exception("Failed to get source character affiliation.");
 
+                }
+
+                try {
+                    $this->userAuthorization->getAccessToken("Source", $sourceCharacter);
+                }
+                catch (\Exception $error) {
+                    return;
                 }
 
                 $this->sourceCharacterID = $sourceCharacter;

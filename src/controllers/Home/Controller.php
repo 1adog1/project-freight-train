@@ -80,6 +80,7 @@
                         );
 
                         if (!$this->quote->valid) {
+                            $this->errors = array_merge($this->errors, $this->quote->errors);
                             header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
                         }
 
@@ -127,6 +128,13 @@
 
                     return;
 
+                }
+
+                try {
+                    $this->userAuthorization->getAccessToken("Source", $sourceCharacter);
+                }
+                catch (\Exception $error) {
+                    return;
                 }
 
                 $this->sourceCharacterID = $sourceCharacter;

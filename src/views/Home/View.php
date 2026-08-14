@@ -32,12 +32,12 @@
                     
                     <label for="volume" class="form-label">Volume</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" name="volume" id="volume" value="<?php echo htmlspecialchars(($_POST["volume"] ?? "")); ?>" required>
+                        <input type="number" step="any" min="0" class="form-control" name="volume" id="volume" value="<?php echo htmlspecialchars(($_POST["volume"] ?? "")); ?>" required>
                         <span class="input-group-text">m³</span>
                     </div>
                     <label for="collateral" class="form-label mt-3">Collateral</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" name="collateral" id="collateral" value="<?php echo htmlspecialchars(($_POST["collateral"] ?? "")); ?>" required>
+                        <input type="number" step="any" min="0" class="form-control" name="collateral" id="collateral" value="<?php echo htmlspecialchars(($_POST["collateral"] ?? "")); ?>" required>
                         <span class="input-group-text">ISK</span>
                     </div>
 
@@ -271,7 +271,7 @@
         protected function errorTemplate() {
             
             if ($this->controller->quote_requested) {
-                foreach ($this->controller->quote->errors as $eachError) {
+                foreach ($this->controller->errors as $eachError) {
                 ?>
 
                     <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
